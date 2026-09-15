@@ -7,10 +7,11 @@
   `./tools/qr.sh "<question-board-url>" "<links-url>"`
 
 ## Optional — drop these in and they appear automatically
+
+_Nothing outstanding right now._
 Any image the deck can't find shows a dashed "Drop <path> here" slot instead of
 breaking, so nothing looks wrong if you skip them.
 
-- `kalam.jpg` — APJ Abdul Kalam, for Act 4 slide "Can you imagine him as an Air Force pilot?"
 
 ## Act 0 — the twist
 Slides 3–11 deliberately show **no photo**, so the room can't tell the two boys

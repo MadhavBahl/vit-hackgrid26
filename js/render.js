@@ -37,6 +37,11 @@
     }).join('') + '</div>';
   }
 
+  // Full-bleed background image, blurred and dimmed so text stays readable.
+  function bgLayer(s) {
+    return s.bg ? '<div class="slide-bg"><img src="' + s.bg + '" alt=""></div>' : '';
+  }
+
   // Any slide can pin the question-board QR bottom-right with `qr: true`.
   function cornerQr(s) {
     return s.qr ? '<div class="slide-qr">' +
@@ -164,6 +169,18 @@
       '<p class="c-script">' + s.script + '</p>';
     var cut = s.cut ? '<div class="c-cut">optional</div>' : '';
 
+    // A detailed image with text inside it needs the full slide width, not the
+    // side slot — otherwise its own labels are unreadable from the back.
+    if (s.wideImage) {
+      return cut + body +
+        '<figure class="c-wide" data-src="' + s.wideImage + '">' +
+        '<img src="' + s.wideImage + '" alt="' + (s.imageAlt || '') + '" ' +
+        'onerror="this.closest(\'figure\').classList.add(\'img-missing\')">' +
+        (s.credit ? '<figcaption>Image: <span class="cr-name">' + s.credit.label +
+          '</span> &middot; ' + s.credit.url + '</figcaption>' : '') +
+        '</figure>';
+    }
+
     // A row of captioned panels — a two-up meme, where the pairing is the point.
     if (s.panels && s.panels.length) {
       return cut + body + '<div class="panel-row">' + s.panels.map(function (pn) {
@@ -183,6 +200,21 @@
       'onerror="this.closest(\'figure\').classList.add(\'img-missing\')">' +
       (s.imageAlt ? '<figcaption>' + s.imageAlt + '</figcaption>' : '') +
       '</figure>';
+  };
+
+  // Hand-off to the homework page. The term list is generated from whatever is
+  // actually marked `inHomework`, so it can never drift out of sync.
+  T.homework = function (s) {
+    var terms = window.DECK.slides
+      .filter(function (x) { return x.inHomework && x.term; })
+      .map(function (x) { return '<li>' + x.term + '</li>'; }).join('');
+    return '<div class="hw-label">' + s.label + '</div>' +
+      '<h2 class="hw-head">' + s.heading + '</h2>' +
+      '<p class="hw-sub">' + s.sub + '</p>' +
+      '<ul class="hw-terms">' + terms + '</ul>' +
+      '<a class="hw-link" href="homework.html" target="_blank" rel="noopener">' +
+      '<span class="hw-link-label">Read them here</span>' +
+      '<span class="hw-link-url">' + (M.homeworkUrl || 'homework.html') + '</span></a>';
   };
 
   T.tier = function (s) {
@@ -307,7 +339,8 @@
       (s.sub ? '<p class="hook-sub">' + s.sub + '</p>' : '');
     if (!s.image) return body;
     return '<div class="hook-body">' + body + '</div>' +
-      '<figure class="hook-photo" data-src="' + s.image + '">' +
+      '<figure class="hook-photo' + (s.imageStyle === 'cutout' ? ' is-cutout' : '') +
+      '" data-src="' + s.image + '">' +
       '<img src="' + s.image + '" alt="' + (s.imageNote || '') + '" ' +
       'onerror="this.closest(\'figure\').classList.add(\'img-missing\')">' +
       (s.imageNote ? '<figcaption>' + s.imageNote + '</figcaption>' : '') + '</figure>';
@@ -532,6 +565,34 @@
       }).join('') + '</div>' + punchline(s) + footnote(s);
   };
 
+  // "Human or AI?" — one piece of media, two hands-up options.
+  T.vote = function (s) {
+    var e = s.embed || {}, media = '';
+    if (e.kind === 'iframe') {
+      media = '<div class="vote-frame" style="width:' + e.w + 'px;height:' + e.h + 'px">' +
+        '<iframe src="' + e.src + '" width="' + e.w + '" height="' + e.h + '" ' +
+        'frameborder="0" allowfullscreen allow="clipboard-write" ' +
+        'referrerpolicy="strict-origin-when-cross-origin" loading="lazy" ' +
+        'title="' + (e.title || 'Embedded work') + '"></iframe>' +
+        (e.host ? '<span class="vote-host">needs wifi &middot; ' + e.host + '</span>' : '') +
+        '</div>';
+    } else if (e.kind === 'audio') {
+      media = '<div class="vote-audio">' +
+        '<div class="va-title">' + (e.title || '') + '</div>' +
+        '<audio controls preload="metadata" src="' + encodeURI(e.src) + '"></audio>' +
+        '</div>';
+    }
+    return '<span class="ac-label">' + s.label + '</span>' +
+      '<h2 class="vote-head">' + s.heading + '</h2>' +
+      '<div class="vote-body">' + media +
+      '<div class="vote-choices">' +
+      '<span class="vc vc-human">Human</span>' +
+      '<span class="vc-or">or</span>' +
+      '<span class="vc vc-ai">AI</span>' +
+      '</div></div>' +
+      (s.instruction ? '<p class="ac-instruction">' + s.instruction + '</p>' : '');
+  };
+
   T.activity = function (s) {
     return '<span class="ac-label">' + s.label + '</span>' +
       '<h2 class="ac-head">' + s.heading + '</h2>' +
@@ -586,7 +647,7 @@
         if (window.console) console.warn('No renderer for slide type "' + s.type + '" — using fallback.');
         fn = T._fallback;
       }
-      return fn(s, ctx) + aside(s) + cornerQr(s);
+      return bgLayer(s) + fn(s, ctx) + aside(s) + cornerQr(s);
     },
     classes: function (s) {
       var c = ['slide', 's-' + s.type, 'act-' + s.act];
@@ -597,6 +658,9 @@
       if (s.image && (s.type === 'hook' || s.type === 'boy' || s.type === 'concept')) c.push('has-image');
       if (s.imageStyle === 'screenshot') c.push('has-screenshot');
       if (s.panels && s.panels.length) c.push('has-panels');
+      if (s.longScript) c.push('has-long-script');
+      if (s.wideImage) c.push('has-wide-image');
+      if (s.bg) c.push('has-bg');
       if (s.images && s.images.length) c.push('has-gallery');
       if (s.tiles && s.tiles.length) c.push('has-tiles');
       if (s.side) c.push('side-' + s.side);

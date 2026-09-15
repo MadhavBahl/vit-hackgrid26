@@ -6,7 +6,8 @@
   'use strict';
 
   var DECK = window.DECK, R = window.RENDER;
-  var ALL = DECK.slides;
+  // Tier 5 lives in homework.html — same data file, filtered out here.
+  var ALL = DECK.slides.filter(function (s) { return !s.inHomework; });
 
   var state = {
     i: 0,              // index into the visible list
@@ -322,26 +323,29 @@
     var cur = 0;
     for (var i = 0; i < ALL.length; i++) {
       if (ALL[i].act !== 2) { tierOf[i] = 0; continue; }
-      if (ALL[i].type === 'tier') cur = ALL[i].tier;
+      if (ALL[i].type === 'tier' || ALL[i].type === 'homework') cur = ALL[i].tier;
       tierOf[i] = cur;
     }
     for (var j = 0; j < ALL.length; j++) {
       skipTo[j] = -1;
       // Only inside a tier's run of concepts — not on the activity that closes
       // the act, where "skip ahead" would mean skipping the activity itself.
-      if (ALL[j].act !== 2 || tierOf[j] < 2 || ALL[j].type === 'activity') continue;
+      if (ALL[j].act !== 2 || tierOf[j] < 2 ||
+          ALL[j].type === 'activity' || ALL[j].type === 'homework' ||
+          ALL[j].type === 'vote') continue;
       // the next tier divider…
       for (var k = j + 1; k < ALL.length; k++) {
-        if (ALL[k].act === 2 && ALL[k].type === 'tier') { skipTo[j] = k; break; }
+        if (ALL[k].act === 2 && (ALL[k].type === 'tier' || ALL[k].type === 'homework')) { skipTo[j] = k; break; }
         // …or, past the last tier, whatever ends the act (the activity)
         if (ALL[k].act !== 2) { skipTo[j] = k; break; }
-        if (ALL[k].type === 'activity') { skipTo[j] = k; break; }
+        if (ALL[k].type === 'activity' || ALL[k].type === 'vote') { skipTo[j] = k; break; }
       }
     }
   }
 
   function tierLabel(idx) {
     var t = ALL[idx];
+    if (t.type === 'homework') return 'Tier ' + t.tier + ' · homework';
     if (t.type === 'tier') {
       return 'Tier ' + t.tier + ' · ' + String(t.heading).replace(/<[^>]+>/g, '');
     }

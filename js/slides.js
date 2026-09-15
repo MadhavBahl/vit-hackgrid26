@@ -19,6 +19,10 @@ window.DECK = {
     // `questionBoardUrl` is what gets printed underneath for anyone typing it.
     questionBoardUrl: 'www.menti.com/al5ub5bucuch',
     questionBoardImage: 'assets/img/qr-menti.png',
+    // Where homework.html is published. Shown on the Tier 5 hand-off slide —
+    // set this to the real URL before the talk, the local path won't work for
+    // anyone in the audience.
+    homeworkUrl: 'theleanprogrammer.com/hackgrid26/homework',
     linksUrl: 'https://linktr.ee/theleanprogrammer'
   },
 
@@ -28,8 +32,8 @@ window.DECK = {
     { n: 1, name: 'My journey: VIT till now',   blurb: '3–4 min' },
     { n: 2, name: 'The AI buzzword decoder',    blurb: '~20 min' },
     { n: 3, name: 'The placement scene in the AI era', blurb: '10–15 min' },
-    { n: 4, name: 'The 16 timeless rules',      blurb: 'The long one' },
-    { n: 5, name: 'The IT industry in the AI world', blurb: '5–7 min' },
+    { n: 4, name: 'The IT industry in the AI world', blurb: '5–7 min' },
+    { n: 5, name: 'The 16 timeless rules',      blurb: 'The long one' },
     { n: 6, name: 'How to grow in the AI era',  blurb: '10–12 min' },
     { n: 7, name: 'Close + AMA',                blurb: 'Open floor' }
   ],
@@ -377,116 +381,134 @@ window.DECK = {
       ],
       notes: 'The sanskaar line is a guaranteed laugh — let the second panel land before you explain anything.\n\nThe point underneath: nobody programmed politeness in. Humans sat there rating thousands of answers good or bad, and the model learned the pattern. Same as the dog, same as the drilling.' },
 
-    { act: 2, type: 'concept', n: 16, term: 'RAG (Retrieval-Augmented Generation)',
-      ref: "Open-book exam: it checks the textbook &mdash; your company's own docs &mdash; before answering instead of trusting memory.",
+    { act: 2, type: 'concept-title', n: 16, term: 'RAG',
+      notes: 'Four letters again. This is the one they are most likely to be asked to build in an interview, so flag that before you click: "if you take one term out of this tier, take this one."' },
+
+    { act: 2, type: 'concept', n: 16, term: 'RAG',
+      expand: 'Retrieval-Augmented Generation',
+      image: 'assets/img/act2/c17.jpg',
+      imageAlt: 'An open-book exam',
+      ref: "Open-book exam: it checks the textbook before answering instead of trusting memory.",
       script: 'How companies make AI answer correctly on their private data.',
-      notes: 'IMPORTANT — they will be asked to build one of these in Act 6. Say the words "you will build one of these today-ish".' },
+      notes: 'IMPORTANT — they will be asked to build one of these in Act 6. Say the words "you will build one of these today-ish".\n\nThe image is the whole concept: closed-book means answering from memory and bluffing when memory fails (that is hallucination, slide 43). Open-book means checking the source first. RAG is just forcing the open book.' },
 
-    { act: 2, type: 'concept', n: 17, term: 'Embeddings + Vector Database',
-      ref: 'A dating app matching by vibe, or "similar songs" on Spotify. Meaning turned into numbers so similar things sit close together.',
-      script: 'The trick that powers search-by-meaning, and RAG under the hood.',
-      notes: 'Pairs directly with #16 (RAG). Keep them adjacent.' },
-
-    { act: 2, type: 'concept', n: 18, term: 'Grounding / Citations', cut: true,
+    { act: 2, type: 'concept', n: 17, term: 'Grounding / Citations', cut: true,
       ref: "Receipts. A journalist citing sources vs your uncle's WhatsApp forward.",
       script: 'Forcing the AI to back its answers with real sources so it stops bluffing.',
       notes: 'CUTTABLE. The WhatsApp-uncle line is strong though — keep if the room is enjoying itself.' },
 
     { act: 2, type: 'tier', tier: 4, label: 'Tier 4', heading: 'The frontier everyone is hyping <em>now</em>', notes: 'This is the tier they came for. Slow down slightly and give it room.' },
 
-    { act: 2, type: 'concept', n: 19, term: 'Foundation / Frontier Models',
-      ref: 'The flagship phones everyone compares: GPT, Claude, Gemini, Llama.',
-      script: 'The big base engines that everything else is built on top of.',
+    { act: 2, type: 'concept', n: 18, term: 'Foundation / Frontier Models',
+      ref: 'GPT, Claude, Gemini, Llama.',
+      longScript: true,
+      script: 'A <strong>foundation model</strong> is any large-scale, general-purpose AI trained on vast data that can be adapted to many downstream tasks (like text, vision, or audio). A <strong>frontier model</strong> is a specialized subcategory representing the absolute cutting edge &mdash; the most powerful, complex, and expensive AI systems available at any given time.',
       notes: '' },
 
-    { act: 2, type: 'concept', n: 20, term: 'AI Agents / Agentic AI',
+    { act: 2, type: 'concept', n: 19, term: 'AI Agents / Agentic AI',
       ref: 'Jarvis actually booking the flight and running the code, not just chatting. Or the Professor running the whole heist.',
+      image: 'assets/img/act2/c18.jpeg',
+      imageAlt: 'J.A.R.V.I.S.',
       script: '<strong>The 2026 buzzword.</strong> AI that takes actions in the real world, not just spits out text.',
-      notes: 'Money Heist callback — Act 4 uses the Professor again. Nice thread.' },
+      notes: 'Money Heist callback — Act 5 uses the Professor again. Nice thread.\n\nThe word doing the work in the reference is ACTUALLY: Jarvis does not describe how to book the flight, he books it. That one verb is the whole difference between a chatbot and an agent, and it is the term they will hear most in 2026.' },
 
-    { act: 2, type: 'concept', n: 21, term: 'Tool Use / Function Calling',
+    { act: 2, type: 'concept-title', n: 20, term: 'Tool Use / Function Calling',
+      notes: 'Name it and pause. This is the mechanism that makes the previous slide possible — an agent is only as useful as the tools it can reach for.' },
+
+    { act: 2, type: 'concept', n: 20, term: 'Tool Use / Function Calling',
       ref: 'Doraemon reaching into the pocket and pulling out the exact gadget for the problem.',
+      image: 'assets/img/act2/c19.jpeg',
+      imageAlt: 'Doraemon and his gadgets',
       script: 'Giving the AI hands: the ability to use apps, run code, search the web.',
-      notes: '' },
+      notes: 'Follows straight on from agents: this is HOW an agent does anything. The clever bit is not that the gadgets exist — it is that Doraemon picks the right one for the problem without being told which. Same with function calling: the model chooses the tool.' },
 
-    { act: 2, type: 'concept', n: 22, term: 'MCP (Model Context Protocol)',
-      ref: 'USB-C: one universal port so any AI can plug into any tool.',
+    { act: 2, type: 'concept-title', n: 21, term: 'MCP',
+      expand: 'Model Context Protocol',
+      notes: 'The newest term in the tier and the one they are least likely to know. Say the letters, then click — the picture explains it faster than any sentence you could write.' },
+
+    { act: 2, type: 'concept', n: 21, term: 'MCP',
+      expand: 'Model Context Protocol',
+      wideImage: 'assets/img/act2/c20.jpg',
+      imageAlt: 'Before MCP: a tangle of different cables and ports. After MCP: one universal port.',
+      credit: { label: 'OpenSearch', url: 'opensearch.org/blog/introducing-mcp-in-opensearch' },
       script: 'The standard that makes agents actually useful. Finally, one charger for everything.',
-      notes: 'The "one charger" line gets a groan-laugh. Enjoy it.' },
+      notes: 'The "one charger" line gets a groan-laugh. Enjoy it.\n\n' +
+             'Talk over the picture rather than reading the slide: before MCP, every AI needed a custom connector for every tool — that is the tangle on the left. MCP is one standard port, so any model plugs into any tool. That is the USB-C comparison, and the image makes it in about two seconds.' },
 
-    { act: 2, type: 'concept', n: 23, term: 'Multi-agent systems',
+    { act: 2, type: 'concept', n: 22, term: 'Multi-agent systems',
       ref: 'A heist crew or a cricket team: each a specialist, one captain coordinating.',
+      image: 'assets/img/act2/c21.jpeg',
+      imageAlt: 'The crew, and the one coordinating them',
       script: 'Instead of one AI, a team of them, each doing what it is best at.',
-      notes: '' },
+      notes: 'Third Professor reference in the deck — agents on slide 56, and again in Act 5. Worth naming the thread out loud.\n\nThe detail that makes it click: the crew all wear the same mask, but each one has a different job, and none of them sees the whole plan. Only the Professor does. That is the coordinator pattern exactly.' },
 
-    { act: 2, type: 'concept', n: 24, term: 'Reasoning / "Thinking" models',
-      ref: 'CID\'s ACP Pradyuman, "kuch to gadbad hai", working it out step by step. Or "show your working" for full marks.',
-      script: 'Newer models that think in steps before answering, so they crack much harder problems.',
-      notes: 'Do the Pradyuman voice. You know you want to.' },
-
-    { act: 2, type: 'concept', n: 25, term: 'Vibe Coding', highlight: true,
+    { act: 2, type: 'concept', n: 23, term: 'Vibe Coding', highlight: true,
       ref: 'Telling the tailor "make me something like SRK wore" and he stitches it. You describe, it builds.',
       script: 'You describe an app in plain English and the AI writes the code. <strong>This is exactly what this whole talk&rsquo;s title is about.</strong>',
       notes: 'THE TITLE SLIDE OF THE ACT. Point back at the talk title. "The last generation to copy-paste code — this is why." Big beat.' },
 
-    { act: 2, type: 'tier', tier: 5, label: 'Tier 5', heading: 'The industry and safety words', notes: 'Last tier. Pick up the pace again.' },
+    { act: 2, type: 'homework', tier: 5, label: 'Tier 5 &mdash; your homework',
+      heading: 'The industry and safety words',
+      sub: 'We are out of time for these &mdash; so they are yours to read. Same format, same jokes, nine more terms.',
+      notes: 'This is the hand-off, not a skip. Say it plainly: "we would not get through these properly in the time we have, so I have written them up for you."\n\nHold on this slide long enough for people to actually photograph the link. Then tell them the one that matters most: prompt injection, because it is the one that will bite them when they build something.\n\nIMPORTANT: the link on screen only works once the page is hosted somewhere public — set meta.homeworkUrl in js/slides.js to the real URL before the talk.' },
 
-    { act: 2, type: 'concept', n: 26, term: 'Open vs Closed models',
+    { act: 2, inHomework: true, type: 'concept', n: 24, term: 'Open vs Closed models',
       ref: "Mom sharing the full recipe (open: Llama, DeepSeek) vs KFC's secret masala (closed: GPT, Claude).",
       script: 'Whether the recipe is public or locked. A big ongoing fight.',
       notes: '' },
 
-    { act: 2, type: 'concept', n: 27, term: 'Distillation',
+    { act: 2, inHomework: true, type: 'concept', n: 25, term: 'Distillation',
       ref: "The whole class photocopying the topper's notes: you get the gyaan without doing all the work.",
       script: 'A small cheap model trained to copy a big expensive one. This is how DeepSeek shook the market.',
       notes: '' },
 
-    { act: 2, type: 'concept', n: 28, term: 'Compute / GPUs (the chip war)',
+    { act: 2, inHomework: true, type: 'concept', n: 26, term: 'Compute / GPUs (the chip war)',
       ref: 'Petrol for the AI car. Whoever hoards the most GPUs wins, and NVIDIA sells the petrol.',
       script: "AI's real bottleneck isn't ideas, it's chips. That is why NVIDIA became one of the most valuable companies on earth.",
       notes: '' },
 
-    { act: 2, type: 'concept', n: 29, term: 'Scaling Laws', cut: true,
+    { act: 2, inHomework: true, type: 'concept', n: 27, term: 'Scaling Laws', cut: true,
       ref: 'Gym gains: more weight and more food means more muscle, up to a point, then diminishing returns.',
       script: 'The bet that bigger model + more data + more compute keeps getting smarter. Whether it is plateauing is the billion-dollar debate.',
       notes: 'CUTTABLE. But the gym analogy is on-brand for you — keep it if you can.' },
 
-    { act: 2, type: 'concept', n: 30, term: 'AI Alignment / Safety',
+    { act: 2, inHomework: true, type: 'concept', n: 28, term: 'AI Alignment / Safety',
       ref: 'Ra.One (misaligned, evil) vs G.One (aligned, good). The genie taking your wish too literally.',
       script: 'Making a super-capable AI actually <em>want</em> what we want, not just do what we literally said.',
       notes: '' },
 
-    { act: 2, type: 'concept', n: 31, term: 'Prompt Injection / Jailbreaking',
+    { act: 2, inHomework: true, type: 'concept', n: 29, term: 'Prompt Injection / Jailbreaking',
       ref: 'Sweet-talking the strict watchman with a sob story to sneak inside.',
       script: 'Tricking an AI into breaking its own rules with clever words. <strong>The new hacking.</strong>',
       notes: 'Hackathon crowd — "the new hacking" will get them. Good energy beat.' },
 
-    { act: 2, type: 'concept', n: 32, term: 'Deepfakes',
+    { act: 2, inHomework: true, type: 'concept', n: 30, term: 'Deepfakes',
       ref: 'The body-double / hamshakal trope: a fake Don who looks exactly like Don.',
       script: 'AI-made fake photos, voices, and videos so real you cannot tell. Handle with care.',
       notes: 'Last core concept. Then straight into the Turing Test / activity.' },
 
-    { act: 2, type: 'concept', n: 33, term: 'Turing Test', cut: true, optional: true,
+    { act: 2, inHomework: true, type: 'concept', n: 31, term: 'Turing Test', cut: true, optional: true,
       ref: 'Your own "Human or AI?" game, coming up next.',
       script: 'The old question: can you tell you are talking to a machine? Increasingly, no.',
       notes: 'OPTIONAL CLOSER — but it bridges perfectly into the activity. Keep it if you are running the activity.' },
 
-    { act: 2, type: 'concept', n: 34, term: 'The AI bubble / hype cycle', cut: true, optional: true,
+    { act: 2, inHomework: true, type: 'concept', n: 32, term: 'The AI bubble / hype cycle', cut: true, optional: true,
       ref: 'Crypto and NFT flashbacks.',
       script: 'Honest question to end on: how much of this is real and how much is hype? Fair answer: <strong>both.</strong>',
       notes: 'OPTIONAL CLOSER. The honesty here sets up Act 3 Slide 0 nicely ("Honestly, I don\'t know").' },
 
-    { act: 2, type: 'activity',
-      label: 'Activity',
-      heading: 'Human or AI?',
-      steps: [
-        'A shayari &mdash; who wrote it?',
-        'A code snippet &mdash; who wrote it?',
-        'An image &mdash; who made it?'
-      ],
-      instruction: 'Crowd votes on each. Show of hands, loud and fast.',
-      notes: 'Bridges straight out of the Turing Test. Have your 3 items ready as images in assets/img — press → to step through. Keep it to 2–3 minutes.' },
-    /* ============ ACT 3 — THE PLACEMENT SCENE IN THE AI ERA =============== */
+    { act: 2, type: 'vote',
+      label: 'Human or AI?',
+      heading: 'Who made this?',
+      embed: { kind: 'iframe', src: 'https://www.behance.net/embed/project/254393575?ilo0=1',
+               w: 404, h: 316, host: 'behance.net' },
+      notes: 'Hands up for human, hands up for AI, no abstaining. Play it once without saying anything, then ask. Let them commit with hands BEFORE you say a word — people change their vote the moment you hint.\n\nWRITE THE ANSWER HERE so you do not have to remember it live.\n\nWARNING: this is a live Behance embed, so it needs venue wifi. Before the talk, screen-record it and drop the file in assets/ as a backup — if the embed fails you have nothing on screen.' },
+
+    { act: 2, type: 'vote',
+      label: 'Human or AI?',
+      heading: 'Who is the Singer?',
+      embed: { kind: 'audio', src: 'assets/song/Bas Thoda Aur.mp3', title: 'Bas Thoda Aur' },
+      notes: 'Same again — hands up, no abstaining. Then listen to how confident the room sounds.\n\nThis one plays from the local file, so no wifi needed.\n\nGive it 20-30 seconds, not the whole track. The vocal is usually what gives it away, so if you want it harder, start from an instrumental section.\n\nWRITE THE ANSWER HERE.\n\nThis is the better of the two to end on — music gets a stronger reaction than an image, and it sets up the Turing Test point: increasingly, you cannot tell.' },
 
     { act: 3, type: 'act-divider', notes: 'The most relevant act for this room. Arc: name the fear honestly → cut through BOTH fear and hype → show the real map → define the new bar → hand off to Act 6. Numbers are ammunition, not a stats lecture.' },
 
@@ -560,32 +582,17 @@ window.DECK = {
       ],
       punchline: 'And zoom out: freshers are now hired hard by e-commerce, startups, retail and manufacturing too.',
       meme: 'Distracted boyfriend — you staring at TCS while startups and product firms wave.',
-      notes: 'Stop tunnel-visioning on TCS. More doors than your placement cell shows you. If tight on time, let the NEXT slide (the diagram) replace this spoken list rather than doing both.'
-    },
-    {
-      act: 3, type: 'flow',
-      heading: 'The four paths',
-      root: 'Where are the jobs?',
-      branches: [
-        { n: 1, name: 'Mass-hire services',       detail: 'TCS, Infosys, Wipro, Cognizant, Accenture, HCL, TechM<br>High volume, lower CTC, open to every college' },
-        { n: 2, name: 'Product &amp; captives / GCCs', detail: 'Google, Microsoft, Amazon, Zoho, Freshworks<br>Higher CTC, longer screening, harder to crack' },
-        { n: 3, name: 'Niche &amp; domain',           detail: 'VLSI, embedded, analytics, fintech<br>Fewer seats, higher pay, needs targeted prep' },
-        { n: 4, name: 'International / remote',    detail: 'Remote-first, mostly AI/ML roles<br>Small today, growing the fastest' }
-      ],
-      punchline: 'For a tier-2/3 student, paths <strong>1</strong> and <strong>2</strong> are the realistic focus &mdash; but keep an eye on <strong>4</strong>. That is where the AI-era money is quietly moving.',
-      notes: 'Same four buckets as the previous slide, now as one picture so it sticks. Visual pause — let them read it.'
+      notes: 'Stop tunnel-visioning on TCS. More doors than your placement cell shows you.\n\nSpell out GCC when you hit bucket 2 — it is the only place the term appears now. Global Capability Center, a "captive": a global company\'s own engineering office in India rather than outsourcing to a services firm. Google, Microsoft, Walmart, JPMorgan all run big India centres where staff work directly for the parent. That is where the better-paid product work sits.\n\nWalk the four out loud, then give them the steer: for a tier-2/3 student, paths 1 and 2 are the realistic focus — but keep an eye on 4, because that is where the AI-era money is quietly moving.'
     },
     {
       act: 3, type: 'statement', size: 'lg',
       kicker: 'What interviews test now',
       text: 'DSA still opens the door. <strong class="accent">It&rsquo;s just not the whole house anymore.</strong>',
-      beats: [
-        'DSA: a shrinking but still-real gate. Clear the filter &mdash; grinding 1000 problems is no longer the moat.',
-        'System design: rising fast, far more future-proof.',
-        'New AI rounds: "build something with an LLM", basic RAG, prompt sense.'
-      ],
-      footnote: 'The single biggest differentiator: being able to explain <strong>WHY</strong> you chose this over that, with specifics. Memorised answers lose to a candidate who can narrate tradeoffs.',
-      notes: 'Three shifts — reveal one at a time. Land the footnote hard; it is the setup for the roadmap on the next slide.'
+      notes: 'One line on screen, three shifts spoken — count them on your fingers:\n\n' +
+             '<strong>1.</strong> DSA is a shrinking but still-real gate. Clear the filter; grinding 1000 problems is no longer the moat.\n' +
+             '<strong>2.</strong> System design is rising fast and is far more future-proof.\n' +
+             '<strong>3.</strong> New AI-flavoured rounds are showing up: "build something with an LLM", a basic RAG, prompt sense.\n\n' +
+             'Then land the differentiator, which is the real point: being able to explain <strong>WHY</strong> you chose this over that, with specifics. Memorised answers lose to a candidate who can narrate tradeoffs. That sets up the roadmap on the next slide.'
     },
     {
       act: 3, type: 'roadmap',
@@ -613,9 +620,8 @@ window.DECK = {
       act: 3, type: 'statement', size: 'xl',
       kicker: 'The new resume math',
       text: 'One shipped project beats <strong class="accent">half a CGPA point.</strong>',
-      footnote: 'Premium tracks literally review a deployed project before they make the offer.',
       sub: 'Marks got you the test. Shipping gets you the job.',
-      notes: 'A working project live on the internet, with a GitHub link, now carries more weight at interview than your branch or a 0.4 CGPA difference.'
+      notes: 'A working project live on the internet, with a GitHub link, now carries more weight at interview than your branch or a 0.4 CGPA difference. Premium tracks literally review a deployed project before they make the offer — worth saying out loud, it is the concrete proof behind the claim.'
     },
     {
       act: 3, type: 'statement', size: 'xl', mood: 'accent',
@@ -627,268 +633,16 @@ window.DECK = {
       label: 'Gut-check',
       heading: 'Quick show of hands.',
       steps: ['How many of you have ONE project that is live on the internet right now &mdash; that I could open on my phone?'],
-      instruction: 'Count it out loud. Whatever the number, it makes the point land harder because they just felt it.',
+      instruction: '',
       punchline: 'That number is exactly what the rest of this talk is about.',
       notes: 'Closes the act. Use the result as the bridge into Act 6 whichever way it goes — a low number proves the opportunity, a high number lets you raise the bar.'
     },
-    /* ============== ACT 4 — THE 16 TIMELESS RULES ========================= */
-    /* The rules group into three arcs, badged on screen:
-       belief & destiny (1–5) · duality & detachment (6–9) · people & self-mastery (10–16)
+    /* ============ ACT 4 — THE IT INDUSTRY IN THE AI WORLD ================= */
 
-       NOTE ON THE THREE `quote-slot` SLIDES: the Kalam / Dinkar / Peterson
-       passages are third-party copyrighted text and are referenced by
-       attribution only here. Paste the full text from your existing deck into
-       the `text` field of each one before the talk. */
-
-    { act: 4, type: 'act-divider',
-      subtitle: "Use them to become so good they can't ignore you",
-      kicker: 'Or, ignore them to stay average',
-      notes: 'The longest act by far, but most slides are single-line rapid beats so it moves faster than 50 suggests. Decide beforehand whether all 16 rules survive or you trim to the strongest 8–10.' },
-
-    { act: 4, type: 'section-card', label: 'Section 1',
-      text: 'The 16 rules that are unbreakable',
-      notes: 'Section title card.' },
-
-    { act: 4, type: 'statement', size: 'lg',
-      text: 'Why was I telling you my story?',
-      sub: "What's the one learning that you can take from my personal experiences that I shared with you just now?",
-      notes: 'THE CALLBACK to Act 0. This is where the loop closes — make the connection explicit so the audience feels it click. Take a real answer from the crowd if someone offers one.' },
-
-    { act: 4, type: 'rule', rule: 1, arc: 'belief',
-      text: 'You can achieve anything you truly believe in!',
-      notes: 'Rule 1. Direct payoff of the two-boys story.' },
-
-    { act: 4, type: 'hook',
-      text: 'Have you watched Money Heist?',
-      sub: 'Remember how things almost became unimaginably complex and chaotic towards the end?',
-      notes: 'Show of hands. Most of the room will have seen it.' },
-
-    { act: 4, type: 'hook',
-      text: 'Or, did you notice what Bruce Wayne went through?',
-      sub: 'Did you notice how totally messed up his life became before he was able to defeat Joker?',
-      notes: 'Second hook for the same rule. Two references so nobody is left out.' },
-
-    { act: 4, type: 'rule', rule: 2, arc: 'belief',
-      text: 'If everything is going against your plan, you are very close to your goal.',
-      notes: 'Rule 2.' },
-
-    { act: 4, type: 'hook',
-      text: 'Do you want to know why?',
-      sub: "I tried my BEST to get abs when I was in college, but somehow I just COULDN'T, no matter how hard I tried&hellip;",
-      notes: 'Personal example. Callback to the six-pack line from Act 0 — the audience already knows how this ends.' },
-
-    { act: 4, type: 'rule', rule: 3, arc: 'belief',
-      text: "Things don't come to you when you want them. They come to you when you are ready for them!",
-      notes: 'Rule 3.' },
-
-    { act: 4, type: 'hook',
-      text: "What's the biggest learning from Bhagavad Gita?",
-      sub: 'Tell me&hellip;',
-      notes: 'Genuinely ask. Wait for answers — this is an interaction beat, not a rhetorical question.' },
-
-    { act: 4, type: 'verse',
-      sanskrit: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥',
-      translation: 'You have the right to work only, but never to its fruits. Let not the fruits of action be your motive, nor let your attachment be to inaction.',
-      source: 'Bhagavad Gita, Chapter 2, Verse 47',
-      notes: 'The most famous verse in the Gita. Let the Sanskrit sit on screen for a beat before you read the translation.' },
-
-    { act: 4, type: 'rule', rule: 4, arc: 'belief',
-      text: 'The bad part is, that you have absolutely no control over the results&hellip;',
-      notes: 'Rule 4. Deliberately deflating — Rule 5 is the lift.' },
-
-    { act: 4, type: 'hook', image: 'assets/img/kalam.jpg',
-      text: 'Can you imagine him as an Air Force pilot?',
-      sub: 'Sounds unreasonable, right?',
-      imageNote: 'APJ Abdul Kalam',
-      notes: 'Add a photo of APJ Abdul Kalam at assets/img/kalam.jpg. Everyone knows he was rejected for the Air Force — that is the whole point.' },
-
-    { act: 4, type: 'quote-slot',
-      attribution: 'APJ Abdul Kalam',
-      work: 'Wings of Fire',
-      hint: 'The "Desire, when it stems from the heart and spirit&hellip;" passage.',
-      text: '',
-      notes: 'PASTE THE FULL PASSAGE from your existing slide into the `text` field of this slide in js/slides.js. Left out here for copyright.' },
-
-    { act: 4, type: 'hook',
-      text: "The time when I couldn't go to US&hellip;",
-      sub: 'Of course, not as inspiring &mdash; but even I have many such stories, and I bet you too have these!',
-      notes: 'Your own story. Keep it short — it is the bridge to Rule 5, not the destination.' },
-
-    { act: 4, type: 'rule', rule: 5, arc: 'belief',
-      text: "The good part is, that when you don't get what you want, it's because God has bigger plans for you!",
-      notes: 'Rule 5. The lift after Rule 4. Closes the belief-and-destiny arc.' },
-
-    { act: 4, type: 'creed', autoBeat: 1,
-      lines: [
-        { k: 'Fear',      v: 'only God' },
-        { k: 'Love',      v: 'everyone' },
-        { k: 'Believe',   v: 'in the power of universe' },
-        { k: 'Work hard', v: 'daily' }
-      ],
-      notes: 'Four-line creed. Reveal one line at a time, slowly. This is a breathing slide — no rush.' },
-
-    { act: 4, type: 'hook', pattern: 'Can you imagine&hellip;',
-      text: 'Professor without heist?',
-      notes: 'Start of the "can you imagine X without Y" run. Five in a row, rapid fire, building to Rule 6. Do not pause between them.' },
-    { act: 4, type: 'hook', pattern: 'Can you imagine&hellip;',
-      text: 'Bhagat Singh without British Empire?',
-      notes: 'Rapid fire — beat 2 of 5.' },
-    { act: 4, type: 'hook', pattern: 'Can you imagine&hellip;',
-      text: 'MS Dhoni without his passion for cricket?',
-      notes: 'Rapid fire — beat 3 of 5.' },
-    { act: 4, type: 'hook', pattern: 'Can you imagine&hellip;',
-      text: 'Ram without Ravan?',
-      notes: 'Rapid fire — beat 4 of 5. The energy should be climbing.' },
-    { act: 4, type: 'hook', pattern: 'Can you imagine&hellip;',
-      text: 'Krishna without Kansa?',
-      notes: 'Rapid fire — beat 5 of 5. Then hit the rule.' },
-
-    { act: 4, type: 'rule', rule: 6, arc: 'duality',
-      text: "No hero exists without a villain. That's the law of duality!",
-      notes: 'Rule 6. Opens the duality-and-detachment arc.' },
-
-    { act: 4, type: 'hook',
-      text: 'Tell me!',
-      sub: 'Did Alexander the Great not kill people?',
-      notes: 'Provocative on purpose. Let it be uncomfortable for a second.' },
-    { act: 4, type: 'hook',
-      text: 'Tell me!',
-      sub: 'OR, did people not die during Mahabharata?',
-      notes: 'Second provocation, same shape.' },
-    { act: 4, type: 'hook',
-      text: "Still, you feel it's not bad, isn't it?",
-      sub: 'And, there are a million more examples.',
-      notes: 'The resolution of the two provocations. Sets up the Gita verse.' },
-
-    { act: 4, type: 'verse',
-      sanskrit: 'सुखदुःखे समे कृत्वा लाभालाभौ जयाजयौ।<br>ततो युद्धाय युज्यस्व नैवं पापमवाप्स्यसि॥',
-      translation: 'Fight for the sake of duty, treating alike happiness and distress, loss and gain, victory and defeat. Fulfilling your responsibility in this way, you will never incur sin.',
-      source: 'Bhagavad Gita, Chapter 2, Verse 38',
-      notes: 'The answer to both provocations. Duty over outcome.' },
-
-    { act: 4, type: 'rule', rule: 7, arc: 'duality',
-      text: "People who don't take things personally, are attached to a mission, and do their duty are more likely to succeed in life.",
-      notes: 'Rule 7. Longest rule on screen — slow down and read it with them.' },
-
-    { act: 4, type: 'hook',
-      text: 'How do people get strong?',
-      sub: 'Do they become Spiderman in a night, like Peter Parker?',
-      notes: '' },
-    { act: 4, type: 'hook',
-      text: 'How do some people manage to clear the most difficult exams?',
-      sub: 'Do they study one night before?',
-      notes: 'Rhetorical pair. The room knows the answer — let them say "no".' },
-
-    { act: 4, type: 'rule', rule: 8, arc: 'duality',
-      text: "All results come from 'progressive overload'.",
-      notes: 'Rule 8. Gym vocabulary, universal principle. Explain progressive overload in one sentence if the room looks blank.' },
-
-    { act: 4, type: 'hook',
-      text: 'Ram Setu&hellip;',
-      sub: 'Do you know this incident from Ramayan?',
-      notes: 'Setup for the Ramcharitmanas doha.' },
-
-    { act: 4, type: 'verse', lang: 'hi',
-      sanskrit: 'विनय न मानत जलधि जड़, गए तीनि दिन बीति।<br>बोले राम सकोप तब, भय बिनु होइ न प्रीति॥',
-      translation: 'You should have the power to declare a war, and still choose peace.',
-      source: 'Ramcharitmanas',
-      notes: 'Ram asked the ocean politely for three days. Only when he raised his bow did it yield. "भय बिनु होइ न प्रीति" — that is the line.' },
-
-    { act: 4, type: 'quote-slot',
-      attribution: 'Ramdhari Singh Dinkar',
-      work: 'Kurukshetra',
-      hint: 'The "क्षमा, दया, तप, त्याग&hellip;" excerpt.',
-      text: '',
-      notes: 'PASTE THE FULL POEM from your existing slide into the `text` field in js/slides.js. Left out here for copyright.' },
-
-    { act: 4, type: 'rule', rule: 9, arc: 'duality',
-      text: 'To win in life, you need 3 "C": Confidence, Competence, and being Combat Ready!',
-      beats: ['Confidence', 'Competence', 'Combat Ready'],
-      notes: 'Rule 9. Closes the duality arc. Three C\'s — reveal them one at a time.' },
-
-    { act: 4, type: 'quote-slot',
-      attribution: 'Dr. Jordan B. Peterson',
-      hint: 'On a good man being a dangerous man who keeps it under voluntary control.',
-      text: '',
-      notes: 'PASTE THE FULL QUOTE from your existing slide into the `text` field in js/slides.js. Left out here for copyright.' },
-
-    { act: 4, type: 'hook',
-      text: 'Quick question&hellip;',
-      sub: 'Imagine yourself talking to 2 separate people. The first one just keeps talking. The second one asks you questions, and listens to you more. Whom do you like / trust / respect more?',
-      notes: 'Genuine interaction beat. Wait for the answer — they will say the second one. Then hit Rule 10.' },
-
-    { act: 4, type: 'rule', rule: 10, arc: 'people',
-      text: 'All human beings have a tendency to feel more important / powerful when they are being listened to.',
-      sub: 'How to use this? <strong>Ask lots of questions while speaking.</strong>',
-      notes: 'Rule 10. Opens the people-and-self-mastery arc. Point out that you have been doing this to them all session — that gets a laugh and proves the point.' },
-
-    { act: 4, type: 'hook',
-      text: 'Did you know?',
-      sub: 'Working out increases endorphin levels, which reduces your stress and boosts your self-confidence and overall sense of wellbeing?',
-      notes: '' },
-
-    { act: 4, type: 'rule', rule: 11, arc: 'people',
-      text: "Trust in God, and a good workout &mdash; that's all you need to boost your mood.",
-      sub: "Trust in <em>nature</em> if you're an atheist. You NEED to have some faith &mdash; if not God, then have faith in nature.",
-      notes: 'Rule 11. The sub-line matters — it keeps the whole room included. Do not skip it.' },
-
-    { act: 4, type: 'rule', rule: 12, arc: 'people',
-      text: 'No one can care about you as much as you yourself.',
-      sub: 'This doesn&rsquo;t mean you have to be selfish. This means <strong>no one else is responsible for you.</strong>',
-      notes: 'Rule 12. The clarification is essential — without it this sounds cynical.' },
-
-    { act: 4, type: 'hook',
-      text: 'Bhaag Milkha Bhaag',
-      sub: 'Do you remember the scene where he finally wins the nationals, but when he comes back, his girlfriend already got married? And he asked his teacher: "What is he winning? What is he losing?"',
-      notes: '' },
-
-    { act: 4, type: 'rule', rule: 13, arc: 'people',
-      text: 'You are going to lose friends in the process.',
-      sub: 'But, you are going to get new friends as well!',
-      notes: 'Rule 13. Heavy one for a student crowd — many are living this right now. Give it a beat.' },
-
-    { act: 4, type: 'hook',
-      text: 'Escape velocity',
-      sub: 'Do you know how a space shuttle goes to space?',
-      notes: '' },
-    { act: 4, type: 'hook',
-      text: 'Road work?',
-      sub: 'Do you know why a boxer does&hellip;',
-      notes: 'Second setup for Rule 14.' },
-
-    { act: 4, type: 'rule', rule: 14, arc: 'people',
-      text: 'Speed defies gravity! A rabbit will always beat a turtle!',
-      sub: "The rabbit from our old story was lazy &mdash; don't listen to that story.",
-      notes: 'Rule 14. Deliberately contrarian to the fable everyone grew up on. That is what makes it memorable.' },
-
-    { act: 4, type: 'hook',
-      text: 'Can you control the actions of the person sitting next to you?',
-      sub: 'Or, your friend? Or, your partner? Or, your relatives? Or, anyone in the world?',
-      notes: 'Have them literally look at the person next to them. Physical beat, wakes the room up.' },
-
-    { act: 4, type: 'rule', rule: 15, arc: 'people',
-      text: 'Your mind is the only thing you can ever control!',
-      sub: "But that's the only thing you need to control. <strong>If you control your mind, you can control the world!</strong>",
-      notes: 'Rule 15.' },
-
-    { act: 4, type: 'statement', size: 'xl', mood: 'accent',
-      text: 'The outer world is a <strong class="accent">delayed reflection</strong> of your inner world.',
-      notes: 'Not a numbered rule — a standalone landing beat. Let it sit in silence.' },
-
-    { act: 4, type: 'hook',
-      text: 'Can you crack IIT by reading NCERT?',
-      sub: 'This is the final one, I swear ;)',
-      notes: 'The wink is in the original. Keep it — signals to the room that the long act is ending.' },
-
-    { act: 4, type: 'rule', rule: 16, arc: 'people', last: true,
-      text: 'Being just "one step ahead" is a sure-shot way to win in life!',
-      notes: 'Rule 16. THE LAST RULE. This is also the quiet thesis of the whole talk — in the AI era, one step ahead is all it takes. Land it and pause before Act 5.' },
-    /* ============ ACT 5 — THE IT INDUSTRY IN THE AI WORLD ================= */
-
-    { act: 5, type: 'act-divider', notes: 'Quick act — zoomed out from "your first job" to the industry itself. Five fast slides. Punchy, sentiment over stats. 5–7 minutes.' },
+    { act: 4, type: 'act-divider', notes: 'Quick act — zoomed out from "your first job" to the industry itself. Five fast slides. Punchy, sentiment over stats. 5–7 minutes.' },
 
     {
-      act: 5, type: 'statement', size: 'lg',
+      act: 4, type: 'statement', size: 'lg',
       text: "The 'bench army' era is <strong class=\"accent\">ending.</strong>",
       sub: 'For two decades the model was simple: hire thousands of freshers, park them on the bench, train them, bill them out.',
       footnote: 'AI just automated the bottom of that pyramid.',
@@ -896,14 +650,7 @@ window.DECK = {
       notes: 'Say it honestly, not fearfully. This is a structural observation, not a doom prediction.'
     },
     {
-      act: 5, type: 'statement', size: 'lg',
-      text: 'The real action shifted from services to <strong class="accent">GCCs.</strong>',
-      define: { term: 'GCC — Global Capability Center (a "captive")', body: "A global company's own engineering office in India, instead of outsourcing to a services firm. Think Google, Microsoft, Walmart, JPMorgan running big India centres where staff work directly for the parent, not a middleman." },
-      footnote: 'That is where the better-paid product work lives now.',
-      notes: 'SPELL OUT THE TERM — most students genuinely will not know it. Then the punch: if your whole map is TCS and Infosys, you are staring at the shrinking half.'
-    },
-    {
-      act: 5, type: 'two-col',
+      act: 4, type: 'two-col',
       heading: "What's dying vs what's booming",
       left:  { label: 'Dying', tone: 'down', items: ['Rote ticket-work', 'Manual testing', 'Copy-paste coding', 'L1 support'] },
       right: { label: 'Booming', tone: 'up', items: ['Building with AI', 'Data and ML', 'Cloud and platform', 'Product engineering'] },
@@ -912,20 +659,264 @@ window.DECK = {
       notes: 'Note "copy-paste coding" in the dying column — point at it and call back to the talk title. That is the single best callback in the deck.'
     },
     {
-      act: 5, type: 'pyramid',
+      act: 4, type: 'pyramid',
       heading: 'The pyramid is becoming a diamond',
-      sub: 'Fewer juniors doing rote work. More skilled people building.',
+      sub: 'Fewer juniors doing repetitive work. More skilled people building.',
       punchline: 'Scary if you wanted the guaranteed bench seat. <strong class="accent">Pure leverage if you are the skilled one.</strong>',
       notes: 'The old staffing pyramid with its huge fresher base is flattening. Smaller teams ship bigger things now. The animation does the explaining — just let it play.'
     },
     {
-      act: 5, type: 'statement', size: 'xl', mood: 'accent',
+      act: 4, type: 'statement', size: 'xl', mood: 'accent',
       text: "The industry isn't shrinking. <strong class=\"accent\">It's rewiring.</strong>",
       sub: 'Fewer rote seats, more builder seats.',
       footnote: 'The question is not "will there be jobs". It is "which side of the rewiring are you on".',
       notes: 'Leverage, not doom. Hands straight into Act 6 — keep the energy lifting.'
     },
 
+    {
+      act: 4, type: 'statement', size: 'lg',
+      text: 'Before I tell you how to win in the AI era, let me tell you the rules that will <strong class="accent">always</strong> stay relevant.',
+      sub: 'The rules you need to win at life &mdash; not just at AI.',
+      notes: 'THE HINGE OF THE TALK. Everything before this was about a moment in time; everything in the next act outlives it.\n\nSay it slowly. The contrast is the point: you have just spent two acts on an industry that is rewiring itself, and you are about to spend the longest act of the talk on things that do not change at all. Then go straight into Act 5.'
+    },
+
+    /* ============== ACT 5 — THE 16 TIMELESS RULES ========================= */
+    /* The rules group into three arcs, badged on screen:
+       belief & destiny (1–5) · duality & detachment (6–9) · people & self-mastery (10–16)
+
+       NOTE ON THE THREE `quote-slot` SLIDES: the Kalam / Dinkar / Peterson
+       passages are third-party copyrighted text and are referenced by
+       attribution only here. Paste the full text from your existing deck into
+       the `text` field of each one before the talk. */
+
+    { act: 5, type: 'act-divider',
+      subtitle: "Use them to become so good they can't ignore you, Use them to win ANY battle in your life!",
+      kicker: 'Or, ignore them to stay average',
+      notes: 'The longest act by far, but most slides are single-line rapid beats so it moves faster than 50 suggests. Decide beforehand whether all 16 rules survive or you trim to the strongest 8–10.' },
+
+    { act: 5, type: 'section-card', label: 'Section 1',
+      text: 'The 16 rules that are unbreakable',
+      notes: 'Section title card.' },
+
+    { act: 5, type: 'statement', size: 'lg',
+      text: 'Why was I telling you my story?',
+      sub: "What's the one learning that you can take from my personal experiences that I shared with you just now?",
+      notes: 'THE CALLBACK to Act 0. This is where the loop closes — make the connection explicit so the audience feels it click. Take a real answer from the crowd if someone offers one.' },
+
+    { act: 5, type: 'rule', rule: 1, arc: 'belief',
+      text: 'You can achieve anything you truly believe in!',
+      notes: 'Rule 1. Direct payoff of the two-boys story.' },
+
+    { act: 5, type: 'hook',
+      text: 'Have you watched Money Heist?',
+      sub: 'Remember how things almost became unimaginably complex and chaotic towards the end?',
+      image: 'assets/img/act4/d1-cut.png',
+      imageStyle: 'cutout',
+      notes: 'Show of hands. Most of the room will have seen it — fourth Professor appearance in the deck, so you can nod to that.' },
+
+    { act: 5, type: 'hook',
+      text: 'Or, did you notice what Bruce Wayne went through?',
+      sub: 'Did you notice how totally messed up his life became before he was able to defeat Joker?',
+      image: 'assets/img/act4/d2-cut.png',
+      imageStyle: 'cutout',
+      notes: 'Second hook for the same rule. Two references so nobody is left out.\n\nThe still is the interrogation scene — the point where Batman has completely lost control. That is the moment, not the victory: everything falling apart right before it turns.' },
+
+    { act: 5, type: 'rule', rule: 2, arc: 'belief',
+      text: 'If everything is going against your plan, you are very close to your goal.',
+      notes: 'Rule 2.' },
+
+    { act: 5, type: 'hook',
+      text: 'Do you want to know why?',
+      sub: "I tried my BEST to get abs when I was in college, but somehow I just COULDN'T, no matter how hard I tried&hellip;",
+      notes: 'Personal example. Callback to the six-pack line from Act 0 — the audience already knows how this ends.' },
+
+    { act: 5, type: 'rule', rule: 3, arc: 'belief',
+      text: "Things don't come to you when you want them. They come to you when you are ready for them!",
+      notes: 'Rule 3.' },
+
+    { act: 5, type: 'hook',
+      text: "What's the biggest learning from Bhagavad Gita?",
+      sub: 'Tell me&hellip;',
+      notes: 'Genuinely ask. Wait for answers — this is an interaction beat, not a rhetorical question.' },
+
+    { act: 5, type: 'verse',
+      sanskrit: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥',
+      translation: 'You have the right to work only, but never to its fruits. Let not the fruits of action be your motive, nor let your attachment be to inaction.',
+      source: 'Bhagavad Gita, Chapter 2, Verse 47',
+      notes: 'The most famous verse in the Gita. Let the Sanskrit sit on screen for a beat before you read the translation.' },
+
+    { act: 5, type: 'rule', rule: 4, arc: 'belief',
+      text: 'The bad part is, that you have absolutely no control over the results&hellip;',
+      notes: 'Rule 4. Deliberately deflating — Rule 5 is the lift.' },
+
+    { act: 5, type: 'hook', image: 'assets/img/act4/d3-cut.png', imageStyle: 'cutout',
+      text: 'Can you imagine him as an Air Force pilot?',
+      sub: 'Sounds unreasonable, right?',
+      imageNote: 'APJ Abdul Kalam',
+      notes: 'Everyone in the room knows who he is, and everyone knows he was rejected for the Air Force — that is the whole point. Ask the question straight, let them look at him, and let the absurdity of "unreasonable" land. He was rejected — placed ninth when eight were taken — and it is the single best answer to "I did not get the offer I wanted".' },
+
+    { act: 5, type: 'hook',
+      text: "The time when I couldn't go to US&hellip;",
+      sub: 'Of course, not as inspiring &mdash; but even I have many such stories, and I bet you too have these!',
+      notes: 'Your own story. Keep it short — it is the bridge to Rule 5, not the destination.' },
+
+    { act: 5, type: 'rule', rule: 5, arc: 'belief',
+      text: "The good part is, that when you don't get what you want, it's because God has bigger plans for you!",
+      notes: 'Rule 5. The lift after Rule 4. Closes the belief-and-destiny arc.' },
+
+    { act: 5, type: 'creed', autoBeat: 1,
+      lines: [
+        { k: 'Fear',      v: 'only God' },
+        { k: 'Love',      v: 'everyone' },
+        { k: 'Believe',   v: 'in the power of universe' },
+        { k: 'Work hard', v: 'daily' }
+      ],
+      notes: 'Four-line creed. Reveal one line at a time, slowly. This is a breathing slide — no rush.' },
+
+    { act: 5, type: 'hook', pattern: 'Can you imagine&hellip;',
+      text: 'Professor without heist?',
+      bg: 'assets/img/act4/d6a.jpg',
+      notes: 'Start of the "can you imagine X without Y" run. Four in a row, rapid fire, building to Rule 6. Do not pause between them.' },
+    { act: 5, type: 'hook', pattern: 'Can you imagine&hellip;',
+      text: 'Bhagat Singh without British Empire?',
+      bg: 'assets/img/act4/d6b.jpg',
+      notes: 'Rapid fire — beat 2 of 4.' },
+    { act: 5, type: 'hook', pattern: 'Can you imagine&hellip;',
+      text: 'Ram without Ravan?',
+      bg: 'assets/img/act4/d6c.jpg',
+      notes: 'Rapid fire — beat 3 of 4. The energy should be climbing.' },
+    { act: 5, type: 'hook', pattern: 'Can you imagine&hellip;',
+      text: 'Krishna without Kansa?',
+      bg: 'assets/img/act4/d6d.jpg',
+      notes: 'Rapid fire — beat 4 of 4. Then hit the rule.' },
+
+    { act: 5, type: 'rule', rule: 6, arc: 'duality',
+      text: "No hero exists without a villain. That's the law of duality!",
+      notes: 'Rule 6. Opens the duality-and-detachment arc.' },
+
+    { act: 5, type: 'hook',
+      text: 'Tell me!',
+      sub: 'Did Alexander the Great not kill people?',
+      notes: 'Provocative on purpose. Let it be uncomfortable for a second.' },
+    { act: 5, type: 'hook',
+      text: 'Tell me!',
+      sub: 'OR, did people not die during Mahabharata?',
+      notes: 'Second provocation, same shape.' },
+    { act: 5, type: 'hook',
+      text: "Still, you feel it's not bad, isn't it?",
+      sub: 'And, there are a million more examples.',
+      notes: 'The resolution of the two provocations. Sets up the Gita verse.' },
+
+    { act: 5, type: 'verse',
+      sanskrit: 'सुखदुःखे समे कृत्वा लाभालाभौ जयाजयौ।<br>ततो युद्धाय युज्यस्व नैवं पापमवाप्स्यसि॥',
+      translation: 'Fight for the sake of duty, treating alike happiness and distress, loss and gain, victory and defeat. Fulfilling your responsibility in this way, you will never incur sin.',
+      source: 'Bhagavad Gita, Chapter 2, Verse 38',
+      notes: 'The answer to both provocations. Duty over outcome.' },
+
+    { act: 5, type: 'rule', rule: 7, arc: 'duality',
+      text: "People who don't take things personally, are attached to a mission, and do their duty are more likely to succeed in life.",
+      notes: 'Rule 7. Longest rule on screen — slow down and read it with them.' },
+
+    { act: 5, type: 'hook',
+      text: 'How do people get strong?',
+      sub: 'Do they become Spiderman in a night, like Peter Parker?',
+      notes: '' },
+    { act: 5, type: 'hook',
+      text: 'How do some people manage to clear the most difficult exams?',
+      sub: 'Do they study one night before?',
+      notes: 'Rhetorical pair. The room knows the answer — let them say "no".' },
+
+    { act: 5, type: 'rule', rule: 8, arc: 'duality',
+      text: "All results come from 'progressive overload'.",
+      notes: 'Rule 8. Gym vocabulary, universal principle. Explain progressive overload in one sentence if the room looks blank.' },
+
+    { act: 5, type: 'hook',
+      text: 'Ram Setu&hellip;',
+      sub: 'Do you know this incident from Ramayan?',
+      notes: 'Setup for the Ramcharitmanas doha.' },
+
+    { act: 5, type: 'verse', lang: 'hi',
+      sanskrit: 'विनय न मानत जलधि जड़, गए तीनि दिन बीति।<br>बोले राम सकोप तब, भय बिनु होइ न प्रीति॥',
+      translation: 'You should have the power to declare a war, and still choose peace.',
+      source: 'Ramcharitmanas',
+      notes: 'Ram asked the ocean politely for three days. Only when he raised his bow did it yield. "भय बिनु होइ न प्रीति" — that is the line.' },
+
+    { act: 5, type: 'rule', rule: 9, arc: 'duality',
+      text: 'To win in life, you need 3 "C": Confidence, Competence, and being Combat Ready!',
+      beats: ['Confidence', 'Competence', 'Combat Ready'],
+      notes: 'Rule 9. Closes the duality arc. Three C\'s — reveal them one at a time.' },
+
+    { act: 5, type: 'hook',
+      text: 'Quick question&hellip;',
+      sub: 'Imagine yourself talking to 2 separate people. The first one just keeps talking. The second one asks you questions, and listens to you more. Whom do you like / trust / respect more?',
+      notes: 'Genuine interaction beat. Wait for the answer — they will say the second one. Then hit Rule 10.' },
+
+    { act: 5, type: 'rule', rule: 10, arc: 'people',
+      text: 'All human beings have a tendency to feel more important / powerful when they are being listened to.',
+      sub: 'How to use this? <strong>Ask lots of questions while speaking.</strong>',
+      notes: 'Rule 10. Opens the people-and-self-mastery arc. Point out that you have been doing this to them all session — that gets a laugh and proves the point.' },
+
+    { act: 5, type: 'hook',
+      text: 'Did you know?',
+      sub: 'Working out increases endorphin levels, which reduces your stress and boosts your self-confidence and overall sense of wellbeing?',
+      notes: '' },
+
+    { act: 5, type: 'rule', rule: 11, arc: 'people',
+      text: "Trust in God, and a good workout &mdash; that's all you need to boost your mood.",
+      sub: "Trust in <em>nature</em> if you're an atheist. You NEED to have some faith &mdash; if not God, then have faith in nature.",
+      notes: 'Rule 11. The sub-line matters — it keeps the whole room included. Do not skip it.' },
+
+    { act: 5, type: 'rule', rule: 12, arc: 'people',
+      text: 'No one can care about you as much as you yourself.',
+      sub: 'This doesn&rsquo;t mean you have to be selfish. This means <strong>no one else is responsible for you.</strong>',
+      notes: 'Rule 12. The clarification is essential — without it this sounds cynical.' },
+
+    { act: 5, type: 'hook',
+      text: 'Bhaag Milkha Bhaag',
+      sub: 'Do you remember the scene where he finally wins the nationals, but when he comes back, his girlfriend already got married? And he asked his teacher: "What is he winning? What is he losing?"',
+      notes: '' },
+
+    { act: 5, type: 'rule', rule: 13, arc: 'people',
+      text: 'You are going to lose friends in the process.',
+      sub: 'But, you are going to get new friends as well!',
+      notes: 'Rule 13. Heavy one for a student crowd — many are living this right now. Give it a beat.' },
+
+    { act: 5, type: 'hook',
+      text: 'Escape velocity',
+      sub: 'Do you know how a space shuttle goes to space?',
+      notes: '' },
+    { act: 5, type: 'hook',
+      text: 'Road work?',
+      sub: 'Do you know why a boxer does&hellip;',
+      notes: 'Second setup for Rule 14.' },
+
+    { act: 5, type: 'rule', rule: 14, arc: 'people',
+      text: 'A rabbit will always beat a turtle!',
+      sub: "The rabbit from our old story was lazy &mdash; don't listen to that story.",
+      notes: 'Rule 14. Deliberately contrarian to the fable everyone grew up on. That is what makes it memorable.' },
+
+    { act: 5, type: 'hook',
+      text: 'Can you control the actions of the person sitting next to you?',
+      sub: 'Or, your friend? Or, your partner? Or, your relatives? Or, anyone in the world?',
+      notes: 'Have them literally look at the person next to them. Physical beat, wakes the room up.' },
+
+    { act: 5, type: 'rule', rule: 15, arc: 'people',
+      text: 'Your mind is the only thing you can ever control!',
+      sub: "But that's the only thing you need to control. <strong>If you control your mind, you can control the world!</strong>",
+      notes: 'Rule 15.' },
+
+    { act: 5, type: 'statement', size: 'xl', mood: 'accent',
+      text: 'The outer world is a <strong class="accent">delayed reflection</strong> of your inner world.',
+      notes: 'Not a numbered rule — a standalone landing beat. Let it sit in silence.' },
+
+    { act: 5, type: 'hook',
+      text: 'Can you crack IIT by reading NCERT?',
+      sub: 'This is the final one, I swear ;)',
+      notes: 'The wink is in the original. Keep it — signals to the room that the long act is ending.' },
+
+    { act: 5, type: 'rule', rule: 16, arc: 'people', last: true,
+      text: 'Being just "one step ahead" is a sure-shot way to win in life!',
+      notes: 'Rule 16. THE LAST RULE. This is also the quiet thesis of the whole talk — in the AI era, one step ahead is all it takes. Land it and pause before Act 5.' },
     /* ============== ACT 6 — HOW TO GROW IN THE AI ERA ===================== */
 
     { act: 6, type: 'act-divider', notes: 'THE PAYOFF. Everything before this was the map; this is the move. Keep energy high — this is the emotional climax before the AMA.' },
