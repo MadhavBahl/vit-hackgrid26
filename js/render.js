@@ -469,6 +469,16 @@
       '<p class="nn-caption">' + s.caption + '</p>';
   };
 
+  // Two mirrored statements with opposite outcomes. The verdict words carry it.
+  T.verdict = function (s) {
+    return '<div class="vd-list">' + s.lines.map(function (l) {
+      return '<div class="vd-line vd-' + l.tone + '">' +
+        '<span class="vd-text">' + l.text + '</span>' +
+        '<span class="vd-word">will ' + l.verdict + '<i>for sure</i></span>' +
+        '</div>';
+    }).join('') + '</div>';
+  };
+
   T.showcase = function (s) {
     return '<div class="showcase-row">' + s.images.map(function (im) {
       return '<figure class="showcase-item" data-src="' + im.src + '">' +
@@ -594,6 +604,17 @@
   };
 
   T.activity = function (s) {
+    // `options` are alternatives shown together; `steps` are an ordered
+    // sequence revealed one at a time.
+    if (s.options) {
+      return '<span class="ac-label">' + s.label + '</span>' +
+        '<h2 class="ac-head">' + s.heading + '</h2>' +
+        '<div class="ac-options">' + s.options.map(function (o, i) {
+          var last = i === s.options.length - 1;
+          return '<span class="ac-opt' + (last ? ' is-last' : '') + '">' + o + '</span>';
+        }).join('') + '</div>' +
+        (s.instruction ? '<p class="ac-instruction">' + s.instruction + '</p>' : '');
+    }
     return '<span class="ac-label">' + s.label + '</span>' +
       '<h2 class="ac-head">' + s.heading + '</h2>' +
       '<ol class="ac-steps">' + s.steps.map(function (st, i) {
@@ -614,9 +635,11 @@
     return '<h2 class="cl-takeaway">' + s.takeaway + '</h2>' +
       '<p class="cl-cta">' + s.cta + '</p>' +
       '<div class="cl-row"><div class="cl-handles">' + s.handles.map(function (h) {
-        return '<div class="cl-handle"><span class="cl-platform">' + h.platform + '</span>' + h.handle + '</div>';
-      }).join('') + '</div>' +
-      '<div class="cl-qr">' + qrBlock(M.linksUrl, 'All my links', 'assets/img/qr-links.png') + '</div></div>';
+        var name = h.url
+          ? '<a class="cl-name" href="' + h.url + '" target="_blank" rel="noopener">' + h.handle + '</a>'
+          : '<span class="cl-name">' + h.handle + '</span>';
+        return '<div class="cl-handle"><span class="cl-platform">' + h.platform + '</span>' + name + '</div>';
+      }).join('') + '</div></div>';
   };
 
   T.ama = function (s) {

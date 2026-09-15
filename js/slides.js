@@ -694,10 +694,6 @@ window.DECK = {
       kicker: 'Or, ignore them to stay average',
       notes: 'The longest act by far, but most slides are single-line rapid beats so it moves faster than 50 suggests. Decide beforehand whether all 16 rules survive or you trim to the strongest 8–10.' },
 
-    { act: 5, type: 'section-card', label: 'Section 1',
-      text: 'The 16 rules that are unbreakable',
-      notes: 'Section title card.' },
-
     { act: 5, type: 'statement', size: 'lg',
       text: 'Why was I telling you my story?',
       sub: "What's the one learning that you can take from my personal experiences that I shared with you just now?",
@@ -940,73 +936,45 @@ window.DECK = {
       kicker: 'Learn in public',
       text: 'Build. Post. Repeat.',
       sub: 'A fresher with no network can build one from scratch by working in the open.',
-      footnote: 'Most students never do this because it feels cringe. <strong>That is exactly why it works.</strong> Do it anyway.',
       meme: '"nobody: / me posting my tiny project on LinkedIn" — own the cringe.',
-      notes: 'HARVEST THE SEED from Act 1, Slide 3. Say it out loud: "remember the one habit I said changed everything? This is it." Post what you build on LinkedIn and X, write up how you did it. Every post is proof of work.'
+      notes: 'HARVEST THE SEED from Act 1, Slide 3. Say it out loud: "remember the one habit I said changed everything? This is it." Post what you build on LinkedIn and X, write up how you did it. Every post is proof of work.\n\nSay the cringe part out loud rather than putting it on screen: most students never do this because it feels cringe, and that is exactly why it works. Do it anyway.'
     },
     {
-      act: 6, type: 'skills',
-      heading: "You don't need a PhD. You need to build <em>ONE</em> thing with AI.",
-      items: [
-        { name: 'Prompting well',        detail: 'The highest-return hour you will spend' },
-        { name: 'A basic RAG',           detail: 'Chat over your own notes' },
-        { name: 'A simple agent',        detail: 'Something that takes an action' },
-        { name: 'Evaluating AI output',  detail: 'Knowing when it is wrong' }
+      act: 6, type: 'verdict',
+      lines: [
+        { text: 'People who still <strong>think</strong> in the age of AI', verdict: 'WIN', tone: 'win' },
+        { text: 'People who still do <strong>manual work</strong> in the age of AI', verdict: 'LOSE', tone: 'lose' }
       ],
-      punchline: 'Pick <strong>one</strong>. Build one small project &mdash; a chatbot over your notes, a resume screener, a study buddy &mdash; and you are already ahead of most of your batch.',
-      footnote: 'The barrier is lower than it has ever been. So the excuse is gone.',
-      notes: 'Four skills matter right now. They do not need to master all four. "The excuse is gone" is the line — say it directly to the room.'
+      notes: 'Two sentences, one contrast. Do not soften either half — the whole point is that it is blunt.\n\nThinking means deciding what to build and why, judging whether the output is any good, knowing the tradeoffs. Manual work means the parts a machine will simply do faster. Say which side each of them is choosing right now.\n\nThen straight into the activity: five minutes to prove which one they are.'
     },
     {
       act: 6, type: 'activity', big: true,
-      label: 'Activity &mdash; live',
-      heading: "Let's settle prompting, live.",
-      steps: [
-        'Take a lazy one-line prompt from the audience.',
-        'Run it on Claude / ChatGPT on the projector.',
-        'Rewrite it specific and detailed. Run it again.',
-        'Show the gap on screen.'
-      ],
-      instruction: 'Three minutes. This teaches the single most useful AI skill better than any slide could.',
-      notes: 'YOUR ENERGY PEAK — milk it. Have the browser tab already open and logged in before the talk. Have a backup screenshot in assets/img in case the venue wifi dies.'
-    },
-    {
-      act: 6, type: 'statement', size: 'xl',
-      kicker: 'Stay T-shaped',
-      text: 'AI is the branch. <strong class="accent">Fundamentals are the trunk.</strong>',
-      sub: 'Do not skip DSA and system design to chase AI.',
-      footnote: 'AI on top of zero fundamentals is a house on sand, and the first hard interview question exposes it. Deep in one thing, working knowledge across many.',
-      meme: 'Buff Doge (fundamentals) vs Cheems (AI hype with no basics). Or house on rock vs house on sand.',
-      notes: 'Important counterweight — you have spent the whole talk hyping AI, so this is where you keep them honest. Keep the trunk strong, then grow the branch.'
+      label: 'Activity &mdash; right now',
+      heading: 'Build something in the next 5 minutes.',
+      options: ['An image?', 'A game?', 'A website?', 'Anything.'],
+      instruction: 'Phones out, laptops open. Five minutes on the clock.',
+      notes: 'Start the timer and actually let them build — five real minutes of silence feels long on stage, so resist filling it.\n\nWalk the room while it runs. Look over shoulders, react out loud to anything good.\n\nWith about a minute left, tell them you will ask two or three people to show what they made. Then do it — one person showing a working thing they built in five minutes is worth more than anything you could say here.\n\nThe point lands by itself: the barrier is gone. That is the setup for "ship one tiny thing by Monday" at the end of the act.'
     },
     {
       act: 6, type: 'statement', size: 'xxl', mood: 'accent',
       text: "AI won't take your job. <strong class=\"accent\">An engineer who uses AI will.</strong> Go be that engineer.",
-      notes: 'THE ONE LINE TO CARRY HOME. If they forget everything else today, this is the sentence that should survive. Say it. Pause. Let it land. This is the emotional takeaway of the entire talk.'
-    },
-    {
-      act: 6, type: 'challenge',
-      kicker: 'Your move this weekend',
-      text: 'Ship one tiny thing by <strong class="accent">Monday.</strong>',
-      steps: ['Pick a small idea', 'Build it with AI help', 'Deploy it', 'Post the link'],
-      notes: 'Convert the inspiration into action before it fades. The whole playbook compressed into a single weekend. Then open the floor: "That\'s what I wanted to share. Now let\'s talk."'
+      notes: 'THE ONE LINE TO CARRY HOME. If they forget everything else today, this is the sentence that should survive. Say it. Pause. Let it land.\n\nThis now closes the act, so hand off from here: "That is what I wanted to share. Now let\'s talk." Then into the close and the AMA.'
     },
 
     /* ==================== ACT 7 — CLOSE + AMA ============================= */
 
-    { act: 7, type: 'act-divider', notes: 'Close + AMA. The outreach payoff.' },
-
     {
       act: 7, type: 'close',
-      takeaway: "AI won't take your job. An engineer who uses AI will.",
+      takeaway: "Let&rsquo;s connect.",
       cta: 'Go be that engineer.',
       handles: [
-        { platform: 'LinkedIn',  handle: '/in/madhavbahl' },
-        { platform: 'X',         handle: '@TheLeanProgrammer' },
-        { platform: 'Instagram', handle: '@theleanprogrammer' },
-        { platform: 'GitHub',    handle: '/MadhavBahlMD' }
+        { platform: 'LinkedIn',  handle: '/in/madhavbahl',      url: 'https://www.linkedin.com/in/madhavbahl/' },
+        { platform: 'X',         handle: '@MadhavBahlMD',       url: 'https://x.com/MadhavBahlMD' },
+        { platform: 'Instagram', handle: '@TheLeanProgrammer',  url: 'https://www.instagram.com/theleanprogrammer/' },
+        { platform: 'YouTube',   handle: '@TheLeanProgrammer',  url: 'https://www.youtube.com/@TheLeanProgrammer' },
+        { platform: 'GitHub',    handle: '@MadhavBahl',         url: 'https://github.com/MadhavBahl' }
       ],
-      notes: 'EDIT the handles in js/slides.js if any are wrong. One takeaway, plus where to find you. Then straight into questions.'
+      notes: 'One takeaway, plus where to find you. Then straight into questions.\n\nThe handles are clickable — useful if you are screen-sharing or sending the deck afterwards, but on a projector it is the QR they will actually use, so point at that.'
     },
     {
       act: 7, type: 'ama',
