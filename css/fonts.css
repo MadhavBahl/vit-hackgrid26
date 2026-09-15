@@ -1,0 +1,35 @@
+/* ===========================================================================
+   Fonts.
+
+   The deck is designed to look right on system fonts alone, so it will never
+   break on venue wifi. If assets/fonts/*.woff2 exist they are used; if not,
+   the fallbacks in deck.css take over and nothing looks wrong.
+
+   To bundle the webfonts for offline use, run:  ./tools/get-fonts.sh
+   =========================================================================== */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter-variable.woff2') format('woff2-variations');
+  font-weight: 100 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('../assets/fonts/instrument-serif.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('../assets/fonts/instrument-serif-italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/jetbrains-mono.woff2') format('woff2');
+  font-weight: 400 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Serif Devanagari';
+  src: url('../assets/fonts/noto-serif-devanagari.woff2') format('woff2');
+  font-weight: 400 700; font-style: normal; font-display: swap;
+}

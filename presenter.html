@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presenter — HackGrid'26</title>
+<link rel="stylesheet" href="css/fonts.css?v=1789401896">
+<link rel="stylesheet" href="css/deck.css?v=1789401896">
+</head>
+<body class="presenter">
+
+<div class="pv">
+  <div class="pv-bar">
+    <span class="pv-clock" id="clock">—:—</span>
+    <button class="pv-btn" id="btn-timer">start timer</button>
+    <button class="pv-btn" id="btn-reset">reset</button>
+    <span class="pv-meta" id="meta">waiting for the deck…</span>
+    <span style="margin-left:auto" class="pv-meta">
+      <button class="pv-btn" id="btn-prev">◀ prev</button>
+      <button class="pv-btn" id="btn-next">next ▶</button>
+    </span>
+  </div>
+
+  <div class="pv-left">
+    <div class="pv-panel">
+      <h3>On screen now</h3>
+      <div class="pv-current" id="current">—</div>
+      <div class="pv-meme" id="meme"></div>
+    </div>
+    <div class="pv-panel pv-notes">
+      <h3>Speaker notes</h3>
+      <div class="pv-notes-body" id="notes">Open <b>index.html</b> in the other window — this view follows it automatically.</div>
+    </div>
+  </div>
+
+  <div class="pv-right">
+    <div class="pv-panel">
+      <h3>Up next</h3>
+      <div class="pv-next" id="next">—</div>
+    </div>
+    <div class="pv-panel" style="flex:1">
+      <h3>Pace</h3>
+      <div id="pace" class="pv-next">Start the timer to see whether you are ahead or behind.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var chan = new BroadcastChannel('hg26');
+  var S = null;
+
+  function fmt(sec) {
+    var neg = sec < 0; sec = Math.abs(Math.round(sec));
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return (neg ? '-' : '') + m + ':' + String(s).padStart(2, '0');
+  }
+
+  chan.onmessage = function (e) {
+    var m = e.data;
+    if (!m || m.type !== 'state') return;
+    S = m;
+
+    document.getElementById('current').innerHTML =
+      (m.kicker ? '<span class="pv-kicker">' + m.kicker + '</span>' : '') + (m.summary || '—');
+    document.getElementById('notes').innerHTML = m.notes
+      ? String(m.notes).replace(/\n/g, '<br>')
+      : '<em style="color:#666">No notes for this slide.</em>';
+    document.getElementById('next').textContent = m.nextSummary || '—';
+
+    var meme = document.getElementById('meme');
+    meme.textContent = m.meme ? '🖼  ' + m.meme : '';
+
+    document.getElementById('meta').innerHTML =
+      'Slide <b>' + (m.i + 1) + '</b> / ' + m.total +
+      ' &nbsp;·&nbsp; Act <b>' + m.act + '</b> ' + m.actName +
+      (m.maxBeat ? ' &nbsp;·&nbsp; beat ' + m.beat + '/' + m.maxBeat : '') +
+      (m.trim ? ' &nbsp;·&nbsp; <b>TRIM</b>' : '');
+
+    document.getElementById('btn-timer').textContent = m.started ? 'stop timer' : 'start timer';
+  };
+
+  function tick() {
+    if (!S) return;
+    var c = document.getElementById('clock');
+    if (!S.started) { c.textContent = '—:—'; c.className = 'pv-clock'; return; }
+    var elapsed = (Date.now() - S.started) / 1000;
+    c.textContent = fmt(elapsed);
+    c.className = 'pv-clock' + (elapsed > S.target ? ' over' : elapsed > S.target * 0.85 ? ' warn' : '');
+
+    // Pace: where you should be, by slide count, against the target length.
+    var expected = (elapsed / S.target) * S.total;
+    var drift = (S.i + 1) - expected;
+    var el = document.getElementById('pace');
+    if (elapsed < 30) { el.textContent = 'Settling in…'; return; }
+    var word = Math.abs(drift) < 3 ? 'on pace'
+             : drift > 0 ? 'ahead by about ' + Math.round(drift) + ' slides'
+             : 'behind by about ' + Math.round(-drift) + ' slides';
+    el.innerHTML = '<b>' + word + '</b><br>' +
+      'Target ' + Math.round(S.target / 60) + ' min · ' + fmt(S.target - elapsed) + ' left';
+  }
+  setInterval(tick, 1000);
+
+  function cmd(c, extra) { chan.postMessage(Object.assign({ type: 'cmd', cmd: c }, extra || {})); }
+  document.getElementById('btn-next').onclick  = function () { cmd('next'); };
+  document.getElementById('btn-prev').onclick  = function () { cmd('prev'); };
+  document.getElementById('btn-timer').onclick = function () { cmd('timer', { action: S && S.started ? 'stop' : 'start' }); };
+  document.getElementById('btn-reset').onclick = function () { cmd('timer', { action: 'reset' }); };
+
+  document.addEventListener('keydown', function (e) {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].indexOf(e.key) !== -1) { e.preventDefault(); cmd('next'); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].indexOf(e.key) !== -1) { e.preventDefault(); cmd('prev'); }
+  });
+
+  cmd('hello');
+})();
+</script>
+</body>
+</html>

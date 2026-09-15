@@ -1,0 +1,1538 @@
+/* ===========================================================================
+   HackGrid'26 — "The Last Generation to Copy-Paste Code"
+   Design system + slide layouts.
+
+   The deck renders onto a fixed 1280x720 logical stage which is scaled with a
+   transform to fit any screen. That means every size below is a stable
+   "slide pixel" — what you see at your desk is exactly what hits the projector.
+   =========================================================================== */
+
+:root {
+  /* --- Ink & ground ----------------------------------------------------- */
+  --bg:        #131110;
+  --bg-2:      #1B1917;
+  --bg-3:      #262220;
+  --ink:       #F7F3EC;
+  --ink-2:     rgba(247, 243, 236, 0.74);
+  --ink-3:     rgba(247, 243, 236, 0.46);
+  --ink-4:     rgba(247, 243, 236, 0.22);
+  --rule:      rgba(247, 243, 236, 0.13);
+
+  /* --- Accents ---------------------------------------------------------- */
+  --accent:    #E08159;
+  --accent-2:  #C25F38;
+  --accent-in: #2A1710;
+  --cool:      #7FA9CE;
+  --good:      #86B970;
+  --bad:       #D06B64;
+  --gold:      #D9B46A;
+
+  /* --- Type ------------------------------------------------------------- */
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --deva: 'Noto Serif Devanagari', 'Kohinoor Devanagari', 'Devanagari Sangam MN', var(--serif);
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 480ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body.is-blackout .deck,
+body.is-blackout .chrome { opacity: 0; }
+body.is-blackout { background: #000; }
+
+em { font-style: italic; }
+strong { font-weight: 700; }
+.accent { color: var(--accent); }
+
+/* ===========================================================================
+   STAGE
+   =========================================================================== */
+
+.deck {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  overflow: hidden;
+  transition: opacity 200ms linear;
+}
+
+.stage {
+  position: relative;
+  width: 1280px; height: 720px;
+  transform: scale(var(--scale, 1));
+  transform-origin: center center;
+  background: var(--bg);
+}
+
+/* Subtle vignette + grain so large flat fills don't band on a projector. */
+.stage::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 60;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,0.36) 100%);
+}
+
+.slide {
+  position: absolute; inset: 0;
+  padding: 76px 96px;
+  display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s linear var(--dur);
+}
+.slide.is-active {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s;
+}
+.slide.is-past { transform: translateY(-14px); }
+
+/* Slides control their own rhythm — drop every user-agent margin.
+   :where() keeps this at zero specificity so component margins below win. */
+.slide :where(h1, h2, h3, h4, p, ul, ol, figure, blockquote) { margin: 0; padding: 0; }
+.slide :where(ul, ol) { list-style: none; }
+
+/* ===========================================================================
+   SHARED SLIDE FURNITURE
+   =========================================================================== */
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 15px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 26px;
+  display: flex; align-items: center; gap: 14px;
+}
+.kicker::after {
+  content: ''; height: 1px; flex: 1; max-width: 120px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.sub {
+  font-size: 27px; line-height: 1.45;
+  color: var(--ink-2);
+  margin-top: 28px;
+  max-width: 62ch;
+}
+
+.footnote {
+  font-size: 18px; line-height: 1.55;
+  color: var(--ink-3);
+  margin-top: 34px;
+  padding-left: 20px;
+  border-left: 2px solid var(--rule);
+  max-width: 74ch;
+}
+.footnote strong { color: var(--ink-2); }
+
+.punchline {
+  font-size: 26px; line-height: 1.45;
+  color: var(--ink-2);
+  margin-top: 40px;
+  max-width: 70ch;
+}
+.punchline strong { color: var(--ink); }
+
+.source {
+  font-family: var(--mono);
+  font-size: 13px; letter-spacing: 0.06em;
+  color: var(--ink-4);
+  margin-top: 22px;
+}
+
+/* A small throwaway line pinned low on the slide — an aside, not a footnote.
+   Sits above the HUD and never affects the centring of the main content. */
+.slide-aside {
+  position: absolute; left: 96px; right: 96px; bottom: 54px;
+  font-family: var(--serif); font-style: italic;
+  font-size: 19px; line-height: 1.5;
+  color: var(--ink-3);
+  max-width: 82ch;
+}
+/* The aside is pinned, so slides carrying one reserve its band in the flow. */
+.slide.has-aside { padding-bottom: 120px; }
+
+/* Beats: items revealed one arrow-press at a time. */
+.beat {
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 340ms var(--ease), transform 340ms var(--ease);
+}
+.beat.is-shown { opacity: 1; transform: none; }
+
+/* ===========================================================================
+   TYPE SCALE FOR STATEMENT SLIDES
+   =========================================================================== */
+
+.statement-text {
+  font-family: var(--sans);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  max-width: 21ch;
+  text-wrap: balance;
+}
+.size-sm  .statement-text { font-size: 34px; max-width: 44ch; line-height: 1.3; font-weight: 550; }
+.size-md  .statement-text { font-size: 46px; max-width: 30ch; line-height: 1.22; }
+.size-lg  .statement-text { font-size: 60px; }
+.size-xl  .statement-text { font-size: 76px; }
+.size-xxl .statement-text { font-size: 92px; max-width: 17ch; }
+
+.mood-dark { background: #0B0A09; }
+.mood-dark .statement-text { font-weight: 600; }
+.mood-accent .statement-text { max-width: 19ch; }
+
+/* ===========================================================================
+   TITLE
+   =========================================================================== */
+
+.s-title { justify-content: center; text-align: left; }
+.s-title .title-main {
+  font-family: var(--sans);
+  font-size: 96px; font-weight: 700;
+  letter-spacing: -0.035em; line-height: 0.98;
+  max-width: 15ch;
+  background: linear-gradient(170deg, var(--ink) 30%, var(--accent) 145%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.s-title .title-sub {
+  font-family: var(--serif);
+  font-size: 38px; font-style: italic;
+  color: var(--ink-2);
+  margin-top: 26px;
+}
+.s-title .title-foot {
+  position: absolute; left: 96px; bottom: 68px;
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--mono); font-size: 16px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent);
+}
+.s-title .title-foot::before {
+  content: ''; width: 42px; height: 2px; background: var(--accent);
+}
+.s-title .title-speaker {
+  position: absolute; right: 96px; bottom: 68px;
+  font-size: 16px; color: var(--ink-3); text-align: right;
+}
+.s-title .title-speaker b { display: block; color: var(--ink); font-size: 19px; font-weight: 600; }
+
+/* ===========================================================================
+   ACT 0 — THE TWO BOYS
+   Boy 1 is cold and de-saturated, Boy 2 is warm. The visual contrast is what
+   sells the twist, so keep these two looking like different people.
+   =========================================================================== */
+
+.s-boy { justify-content: center; }
+.s-boy .boy-tag {
+  font-family: var(--mono); font-size: 14px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 30px;
+  display: inline-flex; align-items: center; gap: 12px;
+  align-self: flex-start;
+  padding: 9px 18px; border-radius: 100px;
+  border: 1px solid currentColor;
+}
+.s-boy .boy-text {
+  font-size: 62px; font-weight: 650;
+  letter-spacing: -0.025em; line-height: 1.12;
+  max-width: 19ch; text-wrap: balance;
+}
+.s-boy .boy-sub { font-size: 26px; color: var(--ink-3); margin-top: 24px; font-style: italic; }
+
+.boy-1 { background: linear-gradient(135deg, #0F1214 0%, #14171A 100%); }
+.boy-1 .boy-tag { color: var(--cool); }
+.boy-1 .boy-text { color: #D6DEE5; }
+.boy-1 .boy-text strong { color: #fff; }
+
+.boy-2 { background: linear-gradient(135deg, #17110D 0%, #1E1512 100%); }
+.boy-2 .boy-tag { color: var(--accent); }
+.boy-2 .boy-text strong { color: var(--accent); }
+
+/* Boy slides with a photo: text left, portrait right.
+   The photo gets graded into boy-1's cold palette so a warm sunny snapshot
+   doesn't fight the slide it's sitting on. */
+.s-boy.has-image { flex-direction: row; align-items: center; gap: 64px; }
+.s-boy.has-image .boy-body { flex: 1; min-width: 0; }
+.s-boy.has-image .boy-text { font-size: 54px; max-width: 15ch; }
+
+.boy-photo {
+  position: relative; flex: none;
+  width: 392px; aspect-ratio: 4 / 5;
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+.boy-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 46% center;
+  display: block;
+}
+/* Cool grade + inner edge, so it reads as part of the deck rather than pasted on. */
+.boy-1 .boy-photo img { filter: saturate(0.66) contrast(1.06) brightness(0.9) hue-rotate(-6deg); }
+.boy-2 .boy-photo img { filter: saturate(1.02) contrast(1.04); }
+.boy-photo::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.boy-1 .boy-photo::after { background: linear-gradient(200deg, rgba(60, 96, 130, 0.22), rgba(10, 14, 18, 0.42)); }
+.boy-2 .boy-photo::after { background: linear-gradient(200deg, rgba(224, 129, 89, 0.14), rgba(20, 12, 9, 0.36)); }
+
+.slide.is-active .boy-photo { animation: boyPhotoIn 680ms var(--ease) both; }
+@keyframes boyPhotoIn { from { opacity: 0; transform: translateY(16px) scale(0.985); } to { opacity: 1; transform: none; } }
+
+/* Missing-image slot, sized for this frame. */
+.boy-photo.img-missing { box-shadow: none; }
+.boy-photo.img-missing img { display: none; }
+.boy-photo.img-missing::after { background: none; }
+.boy-photo.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; padding: 22px; border-radius: inherit;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  color: var(--ink-3); font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+
+/* Screenshots are evidence, not portraits: keep them landscape, uncropped and
+   ungraded — a colour-shifted UI screenshot just looks broken. */
+.s-boy.has-screenshot .boy-text { font-size: 48px; max-width: 16ch; }
+.boy-photo.is-screenshot {
+  width: 508px; aspect-ratio: auto;
+  border-radius: 12px; background: #fff;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
+}
+.boy-photo.is-screenshot img {
+  height: auto; object-fit: contain; object-position: center;
+  filter: none;
+}
+.boy-photo.is-screenshot::after {
+  background: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+/* Several artifacts on one slide: a row of equal-height cards under the
+   headline. Matching heights is what makes mixed aspect ratios look composed. */
+.s-boy.has-gallery { flex-direction: column; justify-content: center; }
+.s-boy.has-gallery .boy-text { font-size: 42px; max-width: 27ch; }
+.boy-gallery { display: flex; align-items: flex-end; gap: 22px; margin-top: 36px; }
+.gallery-item {
+  position: relative; height: 260px; flex: none;
+  border-radius: 12px; overflow: hidden; background: #fff;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
+}
+.gallery-item img { height: 100%; width: auto; display: block; filter: none; }
+.gallery-item::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+.slide.is-active .gallery-item { animation: boyPhotoIn 680ms var(--ease) both; }
+.slide.is-active .gallery-item:nth-child(2) { animation-delay: 130ms; }
+
+.gallery-item.img-missing { height: 260px; width: 205px; box-shadow: none; background: none; }
+.gallery-item.img-missing img { display: none; }
+.gallery-item.img-missing::after { box-shadow: none; }
+.gallery-item.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; padding: 20px; border-radius: inherit;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  color: var(--ink-3); font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+
+/* Square tiles beside the headline — a contact sheet of moments rather than
+   one hero image. Squaring them off is what makes four different cameras,
+   crops and years look like one set. */
+.s-boy.has-tiles { flex-direction: row; align-items: center; gap: 56px; }
+.s-boy.has-tiles .boy-body { flex: 1; min-width: 0; }
+.s-boy.has-tiles .boy-text { font-size: 52px; max-width: 14ch; }
+.boy-tiles {
+  flex: none; display: grid;
+  grid-template-columns: repeat(2, 193px); gap: 12px;
+}
+.tile {
+  position: relative; aspect-ratio: 1; overflow: hidden;
+  border-radius: 12px; background: var(--bg-2);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.48);
+}
+.tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.boy-1 .tile img { filter: saturate(0.66) contrast(1.06) brightness(0.9) hue-rotate(-6deg); }
+.boy-2 .tile img { filter: saturate(1.02) contrast(1.04); }
+.tile::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+}
+.boy-1 .tile::after { background: linear-gradient(200deg, rgba(60, 96, 130, 0.22), rgba(10, 14, 18, 0.42)); }
+.boy-2 .tile::after { background: linear-gradient(200deg, rgba(224, 129, 89, 0.12), rgba(20, 12, 9, 0.3)); }
+.tile::before {
+  content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.slide.is-active .tile { animation: boyPhotoIn 620ms var(--ease) both; }
+.slide.is-active .tile:nth-child(2) { animation-delay: 90ms; }
+.slide.is-active .tile:nth-child(3) { animation-delay: 180ms; }
+.slide.is-active .tile:nth-child(4) { animation-delay: 270ms; }
+
+.tile.img-missing { box-shadow: none; }
+.tile.img-missing img, .tile.img-missing::after { display: none; }
+.tile.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  display: grid; place-items: center; text-align: center; padding: 14px;
+  border: 2px dashed var(--ink-4); background: var(--bg-2); box-shadow: none;
+  color: var(--ink-3); font-family: var(--mono); font-size: 10px; line-height: 1.5;
+}
+
+/* A URL inside an aside — make it scannable without shouting. */
+.slide-aside .aside-link { color: var(--accent); }
+
+/* Neural-net diagram. The dashed edges drift left-to-right so the direction
+   of travel — the "note being passed up the chain" — is visible, not implied. */
+.s-neural { justify-content: center; }
+.s-neural .c-head { margin-bottom: 12px; }
+.s-neural .c-term { font-size: 44px; }
+.nn-script { font-size: 22px; color: var(--ink-3); margin-bottom: 8px; }
+
+.nn {
+  display: block; overflow: visible;
+  align-self: stretch;          /* fill the slide, don't shrink to intrinsic size */
+  width: 100%; max-width: none; height: auto;
+}
+
+.nn-edge {
+  stroke: var(--ink-4); stroke-width: 1;
+  stroke-dasharray: 3 7;
+  animation: nnFlow 1.4s linear infinite;
+}
+@keyframes nnFlow { to { stroke-dashoffset: -10; } }
+@media (prefers-reduced-motion: reduce) { .nn-edge { animation: none; } }
+
+.nn-img-frame { fill: none; stroke: var(--cool); stroke-width: 2; }
+
+.nn-node { stroke-width: 2; }
+.nn-in  { fill: rgba(127, 169, 206, 0.18); stroke: var(--cool); }
+.nn-mid { fill: var(--bg-2);               stroke: var(--ink-3); }
+.nn-out { fill: rgba(224, 129, 89, 0.25);  stroke: var(--accent); }
+
+.nn-label {
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em;
+  fill: var(--ink-3); text-anchor: middle;
+}
+.nn-eg {
+  font-family: var(--serif); font-style: italic; font-size: 19px;
+  fill: var(--ink-2); text-anchor: middle;
+}
+.s-neural svg text:first-of-type { fill: var(--cool); }
+
+.nn-caption {
+  font-size: 20px; line-height: 1.55; color: var(--ink-2);
+  margin-top: 18px; max-width: 108ch;
+}
+.nn-caption strong { color: var(--ink); }
+
+/* The plain-English version of a concept. Set apart visually so it reads as a
+   change of register — no label, the shift in tone does the work. */
+.eli6 {
+  margin-top: 22px; padding: 16px 22px;
+  border-radius: 12px; border-left: 3px solid var(--accent);
+  background: rgba(224, 129, 89, 0.09);
+}
+.eli6-text { font-size: 21px; line-height: 1.5; color: var(--ink-2); max-width: 88ch; }
+.eli6-text strong { color: var(--ink); }
+
+/* Mixing-board diagram for parameter counts. */
+.s-faders { justify-content: center; }
+.s-faders .c-head { margin-bottom: 14px; }
+.s-faders .c-term { font-size: 44px; }
+.fd-ref { font-size: 23px; max-width: 70ch; margin-bottom: 20px; }
+.fd { display: block; align-self: stretch; width: 100%; height: auto; overflow: visible; }
+
+.fd-track { fill: rgba(247, 243, 236, 0.1); }
+.fd-knob  { fill: var(--ink-3); }
+.fd-hot   { fill: var(--accent); }
+.fd-rule  { stroke: var(--rule); stroke-width: 1; }
+.fd-count {
+  font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
+  fill: var(--ink); text-anchor: middle;
+}
+.fd-label {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase; fill: var(--ink-4); text-anchor: middle;
+}
+.s-faders .nn-caption { margin-top: 16px; font-size: 19px; max-width: 700px; }
+.s-faders .fd { max-height: 210px; }
+
+/* Showcase: a row of evidence photos, then the line they set up. Equal height
+   lets landscape and portrait shots sit together without looking accidental. */
+.s-showcase { align-items: center; justify-content: center; text-align: center; }
+.showcase-row { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
+.showcase-item {
+  position: relative; height: 268px; flex: none;
+  border-radius: 12px; overflow: hidden; background: var(--bg-2);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+.showcase-item img { height: 100%; width: auto; max-width: 400px; display: block; }
+.showcase-item::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.slide.is-active .showcase-item { animation: boyPhotoIn 560ms var(--ease) both; }
+.slide.is-active .showcase-item:nth-child(2) { animation-delay: 100ms; }
+.slide.is-active .showcase-item:nth-child(3) { animation-delay: 200ms; }
+.showcase-text {
+  font-size: 34px; line-height: 1.35; font-weight: 550;
+  letter-spacing: -0.02em; color: var(--ink-2);
+  max-width: 34ch; text-wrap: balance;
+}
+.showcase-text strong { color: var(--ink); font-weight: 700; }
+
+.showcase-item.img-missing { height: 268px; width: 340px; box-shadow: none; }
+.showcase-item.img-missing img, .showcase-item.img-missing::after { display: none; }
+.showcase-item.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; padding: 18px; border-radius: inherit;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  color: var(--ink-3); font-family: var(--mono); font-size: 11px; line-height: 1.5;
+}
+
+/* Meme run. The heading repeats across slides and only the colour changes at
+   the turn, so the flip from expectation to reality carries the joke. */
+.s-meme { align-items: center; justify-content: center; text-align: center; }
+.s-meme .meme-head {
+  font-size: 38px; font-weight: 650; letter-spacing: -0.025em;
+  margin-bottom: 32px;
+}
+.side-parents { background: linear-gradient(135deg, #0F1214 0%, #14171A 100%); }
+.side-parents .meme-head { color: var(--cool); }
+.side-actual { background: linear-gradient(135deg, #17110D 0%, #1E1512 100%); }
+.side-actual .meme-head { color: var(--accent); }
+
+.meme-frame {
+  position: relative; height: 320px; overflow: hidden;
+  border-radius: 14px; background: #000;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.55);
+}
+/* GIFs are small by nature — cap the frame and let width follow, rather than
+   stretching them to a grid and turning them to mush. */
+.meme-frame img { height: 100%; width: auto; max-width: 660px; display: block; }
+.meme-frame::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.meme-caption {
+  font-size: 27px; font-weight: 600; letter-spacing: -0.015em;
+  color: var(--ink); margin-top: 28px; max-width: 30ch;
+}
+.slide.is-active .meme-frame { animation: boyPhotoIn 520ms var(--ease) both; }
+
+.meme-frame.img-missing { height: 320px; width: 460px; background: none; box-shadow: none; }
+.meme-frame.img-missing img, .meme-frame.img-missing::after { display: none; }
+.meme-frame.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; padding: 20px; border-radius: inherit;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  color: var(--ink-3); font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+
+/* Question-board QR, pinned out of the headline's way. */
+.slide-qr { position: absolute; right: 96px; bottom: 76px; }
+
+/* The reveal. */
+.s-reveal { flex-direction: row; align-items: center; gap: 70px; padding: 0 0 0 96px; }
+.s-reveal .reveal-text {
+  font-size: 76px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.06;
+  max-width: 12ch; flex: 1;
+}
+.s-reveal .reveal-text strong { color: var(--accent); }
+.s-reveal .reveal-photo {
+  width: 470px; height: 720px; flex: none;
+  position: relative; overflow: hidden;
+}
+.s-reveal .reveal-photo img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 22%;
+  filter: saturate(0.98) contrast(1.06) brightness(0.88);
+}
+.s-reveal .reveal-photo::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, var(--bg) 0%, rgba(19,17,16,0.42) 26%, transparent 62%),
+              linear-gradient(to top, rgba(19,17,16,0.55), transparent 38%);
+}
+.slide.is-active .reveal-photo img { animation: revealIn 900ms var(--ease) both; }
+@keyframes revealIn { from { opacity: 0; transform: scale(1.07); } to { opacity: 1; transform: none; } }
+
+/* ===========================================================================
+   BULLETS / AGENDA
+   =========================================================================== */
+
+.s-bullets .bullet-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 30px; }
+.s-bullets .bullet-list li {
+  font-size: 26px; line-height: 1.5; color: var(--ink-2);
+  padding-left: 34px; position: relative; max-width: 78ch;
+}
+.s-bullets .bullet-list li::before {
+  content: ''; position: absolute; left: 0; top: 15px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+.s-bullets .bullet-list li strong { color: var(--ink); }
+
+.s-toc .toc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 15px; }
+.s-toc .toc-list li {
+  display: flex; align-items: baseline; gap: 22px;
+  font-size: 28px; color: var(--ink-3);
+  padding: 9px 0; border-bottom: 1px solid var(--rule);
+  transition: color 300ms var(--ease);
+}
+.s-toc .toc-list li .toc-n {
+  font-family: var(--mono); font-size: 17px; color: var(--ink-4);
+  width: 22px; flex: none;
+}
+.s-toc .toc-list li.is-current { color: var(--ink); }
+.s-toc .toc-list li.is-current .toc-n { color: var(--accent); }
+.s-toc .toc-list li.is-done { color: var(--ink-4); }
+
+/* ===========================================================================
+   ACT DIVIDER
+   =========================================================================== */
+
+.s-act-divider { justify-content: center; background: var(--bg-2); }
+.s-act-divider .act-num {
+  font-family: var(--serif);
+  font-size: 210px; line-height: 0.8; font-weight: 400;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--accent);
+  margin-bottom: 8px;
+}
+.s-act-divider .act-name {
+  font-size: 62px; font-weight: 650; letter-spacing: -0.028em;
+  max-width: 20ch; line-height: 1.1;
+}
+/* max-width keeps these clear of the act index pinned on the right. */
+.s-act-divider .act-sub {
+  font-family: var(--serif); font-style: italic; font-size: 32px;
+  color: var(--ink-2); margin-top: 18px; max-width: 660px;
+}
+.s-act-divider .act-kicker { font-size: 20px; color: var(--ink-3); margin-top: 12px; max-width: 660px; }
+/* Whole-talk index on each divider: done acts recede, the current one is the
+   only thing at full contrast, what's left stays legible but quiet. */
+.act-index {
+  position: absolute; right: 96px; top: 50%; transform: translateY(-50%);
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 2px; width: 320px;
+  border-left: 1px solid var(--rule); padding-left: 22px;
+}
+.act-index li {
+  display: grid; grid-template-columns: 18px 1fr; align-items: baseline;
+  gap: 12px; padding: 5px 0;
+  font-size: 14px; line-height: 1.35;
+  transition: color 300ms var(--ease);
+}
+.act-index .ai-n { font-family: var(--mono); font-size: 11px; }
+.act-index .ai-time {
+  grid-column: 2; font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-top: 3px;
+}
+.act-index .is-done { color: var(--ink-4); }
+.act-index .is-done .ai-n { color: var(--ink-4); }
+.act-index .is-next { color: var(--ink-3); }
+.act-index .is-next .ai-n { color: var(--ink-4); }
+.act-index .is-now {
+  color: var(--ink); font-weight: 650; font-size: 16px;
+  position: relative;
+}
+.act-index .is-now .ai-n { color: var(--accent); }
+.act-index .is-now::before {
+  content: ''; position: absolute; left: -23px; top: 10px;
+  width: 3px; height: 18px; border-radius: 2px; background: var(--accent);
+}
+.slide.is-active .act-index { animation: actIn 700ms 220ms var(--ease) both; }
+.slide.is-active .act-num { animation: actIn 700ms var(--ease) both; }
+.slide.is-active .act-name { animation: actIn 700ms 120ms var(--ease) both; }
+@keyframes actIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+.s-section-card { justify-content: center; align-items: center; text-align: center; background: var(--bg-2); }
+.s-section-card .sc-label {
+  font-family: var(--mono); font-size: 15px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 28px;
+}
+.s-section-card .sc-text {
+  font-size: 70px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08;
+  max-width: 17ch; text-transform: uppercase;
+}
+
+/* ===========================================================================
+   ACT 2 — CONCEPT CARDS
+   =========================================================================== */
+
+.s-concept { justify-content: center; }
+.c-head { display: flex; align-items: baseline; gap: 22px; margin-bottom: 30px; }
+.c-n {
+  font-family: var(--mono); font-size: 19px; font-weight: 500;
+  color: var(--accent); letter-spacing: 0.06em;
+  padding: 7px 14px; border: 1px solid var(--accent); border-radius: 8px;
+  flex: none;
+}
+.c-term {
+  font-size: 56px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+  max-width: 20ch;
+}
+/* Spelled-out form of an acronym: present, but never competing with it. */
+.c-expand {
+  display: block; margin-top: 8px;
+  font-size: 0.46em; font-weight: 500; letter-spacing: -0.005em;
+  color: var(--ink-3);
+}
+
+.c-ref {
+  font-family: var(--serif); font-style: italic;
+  font-size: 30px; line-height: 1.4; color: var(--accent);
+  max-width: 46ch; margin-bottom: 26px;
+  padding-left: 22px; border-left: 3px solid var(--accent-2);
+}
+.c-script {
+  font-size: 29px; line-height: 1.45; color: var(--ink-2); max-width: 52ch;
+}
+.c-script strong { color: var(--ink); }
+.s-concept.is-highlight { background: linear-gradient(135deg, #1C1310 0%, #241713 100%); }
+.s-concept .c-cut {
+  position: absolute; right: 96px; top: 76px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-4);
+  padding: 5px 11px; border: 1px dashed var(--ink-4); border-radius: 100px;
+}
+
+/* Two-up meme panels under a concept. Matching their heights is what makes a
+   portrait still and a landscape still read as one before/after pair. */
+.s-concept.has-panels { justify-content: center; }
+.s-concept.has-panels .c-term { font-size: 42px; }
+.s-concept.has-panels .c-ref { font-size: 21px; max-width: 92ch; margin-bottom: 14px; }
+.s-concept.has-panels .c-script { font-size: 22px; max-width: 84ch; }
+.panel-row { display: flex; gap: 22px; margin-top: 24px; align-items: flex-start; }
+.panel { position: relative; flex: none; }
+.panel img {
+  height: 236px; width: auto; display: block;
+  border-radius: 12px; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+.panel figcaption {
+  font-size: 16px; line-height: 1.4; color: var(--ink-3);
+  margin-top: 12px; max-width: 34ch;
+}
+.panel figcaption strong { color: var(--ink); }
+.slide.is-active .panel { animation: boyPhotoIn 560ms var(--ease) both; }
+.slide.is-active .panel:nth-child(2) { animation-delay: 140ms; }
+.panel.img-missing img { display: none; }
+.panel.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  display: grid; place-items: center; text-align: center;
+  width: 320px; height: 236px; padding: 18px; border-radius: 12px;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  color: var(--ink-3); font-family: var(--mono); font-size: 11px; line-height: 1.5;
+}
+
+/* Concept with a still: the picture replaces the written reference, so give it
+   real size rather than tucking it in a corner. */
+.s-concept.has-image { flex-direction: row; align-items: center; gap: 56px; }
+.s-concept.has-image .c-body { flex: 1; min-width: 0; }
+.s-concept.has-image .c-term { font-size: 46px; }
+.s-concept.has-image .c-ref { font-size: 24px; max-width: 32ch; margin-bottom: 20px; }
+.s-concept.has-image .c-script { font-size: 26px; }
+.c-photo {
+  flex: none; max-width: 470px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.c-photo img {
+  max-width: 470px; max-height: 424px;   /* works for landscape and portrait */
+  image-rendering: auto;
+  width: auto; height: auto;
+  display: block; border-radius: 14px;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.52);
+}
+/* Transparent cutout: no card, no rounded corners — a drop-shadow filter
+   follows the alpha so the subject floats on the slide instead of sitting in
+   a box with a shadow around empty space. */
+.c-photo.is-cutout img {
+  border-radius: 0; box-shadow: none;
+  filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6));
+  max-height: 440px;
+}
+
+.c-photo figcaption {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+  color: var(--ink-4); margin-top: 14px; text-align: center;
+}
+.slide.is-active .c-photo { animation: boyPhotoIn 620ms var(--ease) both; }
+.c-photo.img-missing img { display: none; }
+.c-photo.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  display: grid; place-items: center; text-align: center;
+  aspect-ratio: 16 / 9; border-radius: 14px; padding: 20px;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  color: var(--ink-3); font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+
+/* Concept announced on its own — same furniture as a concept slide, sized up
+   so it reads as a title card rather than a slide missing its body. */
+.s-concept-title { justify-content: center; }
+.s-concept-title .c-term { font-size: 76px; line-height: 1.05; max-width: 16ch; }
+.s-concept-title .c-n {
+  font-size: 24px; padding: 10px 18px;
+  /* Baseline alignment drops the badge ~16px at this heading size; nudge it
+     back so it optically centres on the first line. */
+  transform: translateY(-16px);
+}
+.s-concept-title .ct-head { gap: 28px; margin-bottom: 0; }
+
+.s-tier { justify-content: center; align-items: flex-start; background: var(--bg-2); }
+.s-tier .tier-label {
+  font-family: var(--mono); font-size: 15px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 22px;
+}
+.s-tier .tier-head {
+  font-size: 66px; font-weight: 650; letter-spacing: -0.03em; max-width: 18ch; line-height: 1.08;
+}
+.s-tier .tier-dots { display: flex; gap: 10px; margin-top: 40px; }
+.s-tier .tier-dots i { width: 34px; height: 4px; border-radius: 2px; background: var(--ink-4); }
+.s-tier .tier-dots i.on { background: var(--accent); }
+
+/* The nested-dabba family tree: concentric boxes, label on each rim. */
+.s-family-tree { align-items: center; justify-content: center; }
+.s-family-tree .ft-wrap { display: flex; align-items: center; gap: 72px; width: 100%; }
+.s-family-tree .ft-boxes { position: relative; width: 430px; height: 430px; flex: none; }
+.s-family-tree .ft-side { flex: 1; }
+
+.ft-layer {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  border: 2px solid var(--rule); border-radius: 20px;
+}
+.ft-layer.d0 { width: 430px; height: 430px; }
+.ft-layer.d1 { width: 330px; height: 330px; }
+.ft-layer.d2 { width: 230px; height: 230px; }
+.ft-layer.d3 {
+  width: 130px; height: 130px;
+  border-color: var(--accent); background: rgba(224, 129, 89, 0.16);
+}
+.ft-name {
+  position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+  background: var(--bg); padding: 0 10px; white-space: nowrap;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.ft-layer.d3 > .ft-name { color: var(--accent); }
+.slide.is-active .ft-layer { animation: ftIn 620ms var(--ease) both; }
+.slide.is-active .ft-layer.d1 { animation-delay: 110ms; }
+.slide.is-active .ft-layer.d2 { animation-delay: 220ms; }
+.slide.is-active .ft-layer.d3 { animation-delay: 330ms; }
+@keyframes ftIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Narrow / AGI / ASI ladder — three cards side by side, so the rungs read as a
+   progression you scan left to right rather than a stacked list. */
+.s-ladder { justify-content: center; }
+.s-ladder .ladder {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; margin: 26px 0;
+}
+.rung {
+  display: flex; flex-direction: column;
+  padding: 22px 22px 24px; border-radius: 16px;
+  border: 1px solid var(--rule); background: var(--bg-2);
+  position: relative;
+}
+.rung .rung-name {
+  font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.rung-img {
+  height: 148px; border-radius: 10px; overflow: hidden;
+  background: rgba(0, 0, 0, 0.35); margin-bottom: 16px;
+  display: grid; place-items: center;
+}
+/* contain, not cover — these three shots have very different aspect ratios and
+   cropping them to a common box would decapitate Chitti. */
+.rung-img img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
+.rung .rung-desc { font-size: 18px; line-height: 1.5; color: var(--ink-3); margin-top: auto; }
+
+.rung.here { border-color: var(--accent); background: rgba(224, 129, 89, 0.12); }
+.rung.here .rung-name { color: var(--accent); }
+.rung.here::after {
+  content: 'YOU ARE HERE';
+  position: absolute; top: 18px; right: 20px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--accent-in); background: var(--accent);
+  padding: 4px 9px; border-radius: 100px;
+}
+.rung.far { opacity: 0.5; }
+
+.slide.is-active .rung { animation: boyPhotoIn 560ms var(--ease) both; }
+.slide.is-active .rung:nth-child(2) { animation-delay: 110ms; }
+.slide.is-active .rung:nth-child(3) { animation-delay: 220ms; }
+
+.rung-img.img-missing img { display: none; }
+.rung-img.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  padding: 12px; text-align: center; box-sizing: border-box;
+  border: 2px dashed var(--ink-4); border-radius: 10px;
+  width: 100%; height: 100%; display: grid; place-items: center;
+  color: var(--ink-3); font-family: var(--mono); font-size: 10px; line-height: 1.5;
+}
+
+/* ===========================================================================
+   ACT 3 — DATA, DIAGRAMS, ROADMAP
+   =========================================================================== */
+
+.s-stat .stat-head {
+  font-size: 58px; font-weight: 650; letter-spacing: -0.03em;
+  line-height: 1.1; max-width: 20ch; margin-bottom: 44px;
+}
+.s-stat .stat-row { display: flex; gap: 64px; flex-wrap: wrap; }
+.s-stat .stat-item { max-width: 34ch; }
+.s-stat .stat-value {
+  font-size: 78px; font-weight: 700; letter-spacing: -0.04em;
+  line-height: 1; color: var(--bad); font-variant-numeric: tabular-nums;
+}
+.s-stat.mood-up .stat-value { color: var(--good); }
+.s-stat .stat-label { font-size: 19px; color: var(--ink-3); margin-top: 14px; line-height: 1.45; }
+.slide.is-active .stat-value { animation: statIn 620ms var(--ease) both; }
+.slide.is-active .stat-item:nth-child(2) .stat-value { animation-delay: 140ms; }
+@keyframes statIn { from { opacity: 0; transform: translateY(18px) scale(0.94); } to { opacity: 1; transform: none; } }
+
+/* Fear vs hype. */
+.s-versus { justify-content: center; }
+.s-versus .vs-head {
+  font-size: 56px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 40px;
+}
+.s-versus .vs-row { display: flex; align-items: stretch; gap: 0; }
+.s-versus .vs-side { flex: 1; padding: 30px 34px; position: relative; }
+.s-versus .vs-side:first-child { border-right: 1px solid var(--rule); }
+.s-versus .vs-label {
+  font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-4); margin-bottom: 16px;
+}
+.s-versus .vs-text { font-size: 30px; line-height: 1.35; color: var(--ink-3); }
+/* text-decoration (not a pseudo-element bar) so the strike follows wrapped lines. */
+.s-versus .vs-strike {
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 420ms var(--ease) 420ms;
+}
+.slide.is-active .vs-strike { text-decoration-color: var(--bad); }
+
+/* Four buckets. */
+.s-buckets .b-head { font-size: 48px; font-weight: 650; letter-spacing: -0.03em; }
+.s-buckets .b-sub { font-size: 24px; color: var(--ink-3); margin-top: 10px; margin-bottom: 36px; }
+.s-buckets .b-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.s-buckets .b-item {
+  padding: 22px 24px; border-radius: 14px;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+}
+.s-buckets .b-n { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; }
+.s-buckets .b-name { font-size: 25px; font-weight: 650; margin: 8px 0 9px; }
+.s-buckets .b-detail { font-size: 16px; color: var(--ink-3); line-height: 1.5; }
+
+/* The four-paths flow diagram. */
+.s-flow .f-head { font-size: 44px; font-weight: 650; letter-spacing: -0.03em; margin-bottom: 30px; }
+.s-flow .f-wrap { display: flex; align-items: center; gap: 34px; }
+.s-flow .f-root {
+  flex: none; width: 170px; padding: 22px 20px; border-radius: 14px;
+  background: var(--accent); color: var(--accent-in);
+  font-size: 21px; font-weight: 700; line-height: 1.25; text-align: center;
+}
+.s-flow .f-spine { flex: none; width: 46px; align-self: stretch; position: relative; }
+.s-flow .f-spine::before {
+  content: ''; position: absolute; left: 22px; top: 12%; bottom: 12%;
+  width: 2px; background: var(--ink-4);
+}
+.s-flow .f-root { position: relative; }
+.s-flow .f-root::after {
+  content: ''; position: absolute; left: 100%; top: 50%;
+  width: 56px; height: 2px; background: var(--ink-4);
+}
+.s-flow .f-branches { flex: 1; display: grid; gap: 11px; }
+.s-flow .f-branch {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px; border-radius: 12px;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  position: relative;
+}
+.s-flow .f-branch::before {
+  content: ''; position: absolute; left: -24px; top: 50%;
+  width: 24px; height: 2px; background: var(--ink-4);
+}
+.s-flow .f-bn {
+  font-family: var(--mono); font-size: 15px; color: var(--accent);
+  width: 20px; flex: none;
+}
+.s-flow .f-bname { font-size: 21px; font-weight: 650; width: 265px; flex: none; }
+.s-flow .f-bdetail { font-size: 14px; color: var(--ink-3); line-height: 1.5; }
+
+/* Three-phase prep roadmap. */
+.s-roadmap .r-head { font-size: 44px; font-weight: 650; letter-spacing: -0.03em; margin-bottom: 30px; }
+.s-roadmap .r-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.s-roadmap .r-phase {
+  padding: 24px 22px; border-radius: 16px;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  position: relative;
+}
+.s-roadmap .r-phase:not(:last-child)::after {
+  content: ''; position: absolute; right: -14px; top: 50%;
+  width: 0; height: 0; transform: translateY(-50%);
+  border-left: 9px solid var(--ink-4);
+  border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+}
+.s-roadmap .r-pn {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.s-roadmap .r-pname { font-size: 26px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.02em; }
+.s-roadmap .r-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.s-roadmap .r-items li {
+  font-size: 16px; line-height: 1.5; color: var(--ink-2);
+  padding: 12px 14px; border-radius: 9px; background: var(--bg-3);
+}
+.s-roadmap .r-items li.is-key {
+  background: rgba(224,129,89,0.15); color: var(--ink);
+  outline: 1px solid var(--accent);
+}
+.s-roadmap .r-items li.is-key::after {
+  content: 'highest return'; display: block; margin-top: 7px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+/* ===========================================================================
+   ACT 4 — RULES, HOOKS, VERSES
+   =========================================================================== */
+
+.s-rule { justify-content: center; background: linear-gradient(135deg, #19120E 0%, #1F1511 100%); }
+.s-rule .rule-n {
+  font-family: var(--serif); font-size: 150px; line-height: 0.78;
+  color: transparent; -webkit-text-stroke: 2px var(--accent-2);
+  position: absolute; left: 86px; top: 62px; pointer-events: none;
+}
+.s-rule .rule-text {
+  font-size: 62px; font-weight: 700; letter-spacing: -0.03em;
+  line-height: 1.1; max-width: 20ch; text-wrap: balance;
+  margin-top: 66px;
+}
+.s-rule .rule-sub { font-size: 25px; color: var(--ink-2); margin-top: 26px; max-width: 56ch; line-height: 1.45; }
+.s-rule .rule-arc {
+  position: absolute; right: 96px; top: 76px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-4);
+  padding: 6px 13px; border: 1px solid var(--rule); border-radius: 100px;
+}
+.s-rule.is-last .rule-text { color: var(--accent); }
+
+.s-hook { justify-content: center; }
+.s-hook .hook-pattern {
+  font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-4); margin-bottom: 22px;
+}
+.s-hook .hook-text {
+  font-size: 64px; font-weight: 650; letter-spacing: -0.03em;
+  line-height: 1.08; max-width: 19ch; text-wrap: balance;
+}
+.s-hook .hook-sub { font-size: 25px; line-height: 1.5; color: var(--ink-2); margin-top: 28px; max-width: 58ch; }
+.s-hook.has-image { flex-direction: row; align-items: center; gap: 56px; }
+.s-hook.has-image .hook-body { flex: 1; }
+.s-hook .hook-photo { width: 330px; flex: none; text-align: center; }
+.s-hook .hook-photo img { width: 100%; border-radius: 16px; }
+.s-hook .hook-photo figcaption {
+  font-family: var(--mono); font-size: 13px; color: var(--ink-4);
+  margin-top: 12px; letter-spacing: 0.08em;
+}
+/* Image not added yet: show a labelled slot instead of a broken/blank gap. */
+.hook-photo.img-missing img { display: none; }
+.hook-photo.img-missing::before {
+  content: 'Drop ' attr(data-src) ' here';
+  display: grid; place-items: center; text-align: center;
+  aspect-ratio: 3 / 4; border-radius: 16px;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+  padding: 22px; color: var(--ink-3);
+  font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+
+.s-verse { justify-content: center; align-items: center; text-align: center; background: var(--bg-2); }
+.s-verse .verse-text {
+  font-family: var(--deva);
+  font-size: 42px; line-height: 1.75; color: var(--ink);
+  max-width: 960px; margin-bottom: 44px;
+}
+.s-verse .verse-tr {
+  font-family: var(--serif); font-style: italic;
+  font-size: 26px; line-height: 1.5; color: var(--ink-2);
+  max-width: 58ch;
+}
+.s-verse .verse-src {
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent); margin-top: 30px;
+}
+
+/* Slot for third-party copyrighted passages — paste your text into slides.js. */
+.s-quote-slot { justify-content: center; align-items: center; text-align: center; }
+.s-quote-slot .q-mark {
+  font-family: var(--serif); font-size: 110px; line-height: 0.6;
+  color: var(--accent); opacity: 0.4; margin-bottom: 22px;
+}
+.s-quote-slot .q-text {
+  font-family: var(--serif); font-size: 38px; line-height: 1.45;
+  max-width: 40ch; color: var(--ink);
+}
+.s-quote-slot .q-attr { font-size: 21px; color: var(--ink-2); margin-top: 34px; }
+.s-quote-slot .q-attr b { color: var(--accent); }
+.s-quote-slot .q-work { font-family: var(--serif); font-style: italic; }
+.s-quote-slot .q-empty {
+  max-width: 52ch; padding: 34px 38px; border-radius: 16px;
+  border: 2px dashed var(--ink-4); background: var(--bg-2);
+}
+.s-quote-slot .q-empty .q-hint { font-size: 22px; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+.s-quote-slot .q-empty .q-todo {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-top: 18px;
+}
+
+.s-creed { justify-content: center; }
+.s-creed .creed-list { display: grid; gap: 24px; }
+.s-creed .creed-line { display: flex; align-items: baseline; gap: 26px; }
+.s-creed .creed-k {
+  font-size: 50px; font-weight: 700; letter-spacing: -0.03em;
+  color: var(--accent); width: 260px; flex: none; text-transform: uppercase;
+}
+.s-creed .creed-v { font-size: 36px; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+
+/* ===========================================================================
+   ACT 1 / 5 / 6 — TIMELINE, SPLITS, PYRAMID, SKILLS, ACTIVITIES
+   =========================================================================== */
+
+.s-timeline { justify-content: center; }
+.s-timeline .tl-head { font-size: 44px; font-weight: 650; letter-spacing: -0.03em; margin-bottom: 52px; }
+.s-timeline .tl-track { display: flex; align-items: flex-start; position: relative; }
+.s-timeline .tl-track::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 11px; height: 2px;
+  background: linear-gradient(90deg, var(--ink-4), var(--accent));
+}
+.s-timeline .tl-node { flex: 1; position: relative; padding-right: 24px; }
+.s-timeline .tl-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--ink-4);
+  position: relative; z-index: 1; margin-bottom: 22px;
+}
+.s-timeline .tl-node:last-child .tl-dot { border-color: var(--accent); background: var(--accent); }
+.s-timeline .tl-label { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; }
+.s-timeline .tl-sub { font-size: 17px; color: var(--ink-3); margin-top: 9px; line-height: 1.45; }
+.s-timeline .tl-node:last-child .tl-label { color: var(--accent); }
+
+.s-split .sp-head, .s-two-col .tc-head {
+  font-size: 46px; font-weight: 650; letter-spacing: -0.03em; margin-bottom: 36px;
+}
+.s-split .sp-row, .s-two-col .tc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sp-col, .tc-col {
+  padding: 26px 28px; border-radius: 16px;
+  background: var(--bg-2); border: 1px solid var(--rule);
+}
+.sp-label, .tc-label {
+  font-family: var(--mono); font-size: 14px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-4); margin-bottom: 20px;
+}
+.sp-col ul, .tc-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.sp-col li, .tc-col li { font-size: 21px; color: var(--ink-2); line-height: 1.4; }
+.tc-col.tone-down { border-left: 3px solid var(--bad); }
+.tc-col.tone-down .tc-label { color: var(--bad); }
+.tc-col.tone-down li { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-4); }
+.tc-col.tone-up { border-left: 3px solid var(--good); }
+.tc-col.tone-up .tc-label { color: var(--good); }
+.sp-col:last-child { border-left: 3px solid var(--accent); }
+.sp-col:last-child .sp-label { color: var(--accent); }
+
+.s-pyramid { justify-content: center; }
+.s-pyramid .py-head { font-size: 52px; font-weight: 650; letter-spacing: -0.03em; }
+.s-pyramid .py-sub { font-size: 25px; color: var(--ink-2); margin-top: 14px; margin-bottom: 34px; }
+.s-pyramid .py-row { display: flex; align-items: center; gap: 64px; justify-content: center; }
+.s-pyramid .py-shape { display: grid; gap: 5px; place-items: center; }
+.s-pyramid .py-shape b {
+  display: block; height: 24px; border-radius: 3px;
+  background: var(--ink-4); transition: width 700ms var(--ease);
+}
+.s-pyramid .py-caption {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-4); margin-top: 16px; text-align: center;
+}
+.s-pyramid .py-arrow { font-size: 40px; color: var(--accent); }
+.s-pyramid .py-diamond b { background: var(--accent); opacity: 0.85; }
+.s-pyramid .py-diamond .py-caption { color: var(--accent); }
+
+.s-skills .sk-head { font-size: 50px; font-weight: 650; letter-spacing: -0.03em; max-width: 24ch; line-height: 1.12; margin-bottom: 36px; }
+.s-skills .sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.s-skills .sk-item {
+  padding: 22px 20px; border-radius: 14px;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+}
+.s-skills .sk-name { font-size: 21px; font-weight: 650; line-height: 1.2; }
+.s-skills .sk-detail { font-size: 15px; color: var(--ink-3); margin-top: 11px; line-height: 1.45; }
+
+.s-activity { justify-content: center; background: linear-gradient(135deg, #1A1310 0%, #221812 100%); }
+.s-activity .ac-label {
+  font-family: var(--mono); font-size: 14px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 22px;
+  display: inline-block; align-self: flex-start;
+  padding: 8px 16px; border: 1px solid var(--accent); border-radius: 100px;
+}
+.s-activity .ac-head { font-size: 62px; font-weight: 700; letter-spacing: -0.03em; max-width: 19ch; line-height: 1.08; }
+.s-activity .ac-steps { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 15px; counter-reset: st; }
+.s-activity .ac-steps li {
+  font-size: 24px; color: var(--ink-2); line-height: 1.4;
+  display: flex; align-items: baseline; gap: 18px; counter-increment: st;
+}
+.s-activity .ac-steps li::before {
+  content: counter(st); font-family: var(--mono); font-size: 14px;
+  color: var(--accent); width: 26px; height: 26px; flex: none;
+  display: inline-grid; place-items: center;
+  border: 1px solid var(--accent); border-radius: 50%;
+}
+.s-activity.single .ac-steps li::before { display: none; }
+.s-activity.single .ac-steps li { font-size: 34px; color: var(--ink); font-weight: 600; line-height: 1.3; }
+.s-activity .ac-instruction { font-size: 20px; color: var(--ink-3); margin-top: 30px; font-style: italic; }
+
+.s-challenge { justify-content: center; }
+.s-challenge .ch-text { font-size: 78px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; max-width: 16ch; }
+.s-challenge .ch-steps { display: flex; gap: 12px; margin-top: 46px; flex-wrap: wrap; }
+.s-challenge .ch-step {
+  padding: 15px 24px; border-radius: 100px;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  font-size: 20px; color: var(--ink-2);
+  display: flex; align-items: center; gap: 13px;
+}
+.s-challenge .ch-step i {
+  font-family: var(--mono); font-style: normal; font-size: 13px; color: var(--accent);
+}
+
+.s-close { justify-content: center; }
+.s-close .cl-takeaway {
+  font-size: 54px; font-weight: 700; letter-spacing: -0.03em;
+  line-height: 1.12; max-width: 21ch;
+}
+.s-close .cl-cta { font-size: 40px; color: var(--accent); font-weight: 650; margin-top: 18px; letter-spacing: -0.02em; }
+.s-close .cl-row { display: flex; align-items: flex-end; gap: 60px; margin-top: 54px; }
+.s-close .cl-handles { display: grid; gap: 13px; flex: 1; }
+.s-close .cl-handle { display: flex; align-items: baseline; gap: 18px; font-size: 20px; }
+.s-close .cl-platform {
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-4); width: 100px; flex: none;
+}
+.s-close .cl-qr { flex: none; text-align: center; }
+
+.s-ama { justify-content: center; align-items: center; text-align: center; }
+.s-ama .ama-head { font-size: 96px; font-weight: 700; letter-spacing: -0.035em; }
+.s-ama .ama-sub { font-size: 24px; color: var(--ink-3); margin-top: 20px; }
+.s-ama .ama-qr { margin-top: 44px; }
+
+/* Shared QR block. */
+.qr-block { display: inline-grid; place-items: center; gap: 13px; }
+.qr-block canvas, .qr-block .qr-box {
+  background: #fff; padding: 12px; border-radius: 12px; display: block;
+}
+.qr-block .qr-cap {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+/* A small note for the operator about a meme/asset that belongs on a slide.
+   Hidden on the projector — visible in presenter view and overview. */
+.meme-note { display: none; }
+
+/* ===========================================================================
+   CHROME — progress, act badge, counter, hints
+   =========================================================================== */
+
+.chrome { position: fixed; inset: 0; pointer-events: none; z-index: 50; transition: opacity 200ms; }
+body.is-clean .chrome { opacity: 0; }
+
+.progress {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: rgba(255,255,255,0.07);
+}
+.progress > i {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  transition: width 340ms var(--ease);
+}
+
+.act-rail {
+  position: absolute; left: 20px; bottom: 20px;
+  display: flex; gap: 5px; align-items: center;
+}
+.act-rail .ar-seg {
+  width: 26px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.13);
+  transition: background 300ms;
+}
+.act-rail .ar-seg.done { background: rgba(255,255,255,0.3); }
+.act-rail .ar-seg.now { background: var(--accent); }
+
+.hud {
+  position: absolute; right: 20px; bottom: 16px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  color: var(--ink-4); display: flex; gap: 16px; align-items: center;
+}
+.hud .hud-act { color: var(--ink-3); }
+.hud .hud-timer.warn { color: var(--gold); }
+.hud .hud-timer.over { color: var(--bad); }
+
+body.is-trim .hud::after {
+  content: 'TRIM'; color: var(--accent);
+  padding: 2px 7px; border: 1px solid var(--accent); border-radius: 100px;
+}
+
+/* Skip-tier control. Deliberately substantial — it is an escape hatch you need
+   to find and hit quickly while the room is losing interest, not a nicety.
+   Lives in the chrome so it never disturbs slide layout, and hides with C. */
+.skip-tier {
+  /* Positioned inside the stage, not the viewport: it then scales and sits in
+     the slide's own bottom-right margin whatever shape the window is. */
+  position: absolute; right: 96px; bottom: 44px; z-index: 70;
+  pointer-events: auto; cursor: pointer;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+  max-width: 400px; padding: 14px 20px;
+  text-align: right; font-family: var(--sans);
+  color: var(--ink-2);
+  background: rgba(30, 26, 24, 0.82);
+  border: 1px solid var(--rule); border-radius: 12px;
+  backdrop-filter: blur(8px);
+  transition: color 160ms, border-color 160ms, background 160ms, transform 160ms var(--ease);
+}
+.skip-tier[hidden] { display: none; }
+.stage.has-skip .slide.is-active { padding-bottom: 132px; }
+.skip-tier:hover {
+  color: var(--ink); border-color: var(--accent);
+  background: rgba(40, 32, 28, 0.94);
+  transform: translateY(-1px);
+}
+.skip-tier:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.skip-tier .st-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent);
+}
+.skip-tier .st-target {
+  font-size: 17px; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em;
+}
+.skip-tier .st-target::after { content: '  →'; color: var(--accent); }
+
+/* The chrome layer ignores the pointer, so anything clickable opts back in. */
+.hud-btn {
+  pointer-events: auto; cursor: pointer;
+  display: inline-grid; place-items: center;
+  width: 26px; height: 26px; padding: 0;
+  color: var(--ink-3); background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--rule); border-radius: 7px;
+  transition: color 160ms, border-color 160ms, background 160ms;
+}
+.hud-btn:hover { color: var(--ink); border-color: var(--ink-4); background: rgba(255, 255, 255, 0.1); }
+.hud-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hud-btn .ic-exit { display: none; }
+body.is-fs .hud-btn .ic-enter { display: none; }
+body.is-fs .hud-btn .ic-exit { display: block; }
+
+/* ===========================================================================
+   OVERLAYS
+   =========================================================================== */
+
+.overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(9, 8, 7, 0.94);
+  backdrop-filter: blur(14px);
+  display: none; pointer-events: auto;
+  overflow-y: auto;
+}
+.overlay.is-open { display: block; animation: ovIn 220ms var(--ease); }
+@keyframes ovIn { from { opacity: 0; } to { opacity: 1; } }
+
+.overlay-inner { max-width: 1180px; margin: 0 auto; padding: 54px 40px 70px; }
+.overlay h2 {
+  font-size: 30px; font-weight: 650; letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+.overlay .ov-sub { color: var(--ink-3); font-size: 15px; margin-bottom: 34px; }
+.overlay .ov-close {
+  position: fixed; top: 22px; right: 26px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  color: var(--ink-3); background: var(--bg-3); border: 1px solid var(--rule);
+  padding: 9px 15px; border-radius: 8px; cursor: pointer;
+}
+.overlay .ov-close:hover { color: var(--ink); border-color: var(--ink-4); }
+
+/* --- Keyboard help ------------------------------------------------------ */
+.help-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 34px 54px; }
+.help-group h3 {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent);
+  margin: 0 0 14px; font-weight: 500;
+}
+.help-row {
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px; color: var(--ink-2);
+}
+kbd {
+  font-family: var(--mono); font-size: 11px;
+  background: var(--bg-3); border: 1px solid var(--rule);
+  border-bottom-width: 2px;
+  padding: 3px 8px; border-radius: 5px; color: var(--ink);
+  flex: none; min-width: 30px; text-align: center;
+}
+
+/* --- Overview grid ------------------------------------------------------ */
+.ov-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+.ov-filter {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  padding: 8px 14px; border-radius: 100px; cursor: pointer;
+  background: var(--bg-3); border: 1px solid var(--rule); color: var(--ink-3);
+}
+.ov-filter.is-on { background: var(--accent); color: var(--accent-in); border-color: var(--accent); }
+
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 16px; }
+.ov-card {
+  aspect-ratio: 16 / 9; border-radius: 9px; cursor: pointer;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  padding: 13px; overflow: hidden; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+  transition: border-color 160ms, transform 160ms var(--ease);
+}
+.ov-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.ov-card.is-current { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(224,129,89,0.3); }
+.ov-card.is-cut { opacity: 0.4; border-style: dashed; }
+.ov-card .ovc-n {
+  position: absolute; top: 7px; right: 9px;
+  font-family: var(--mono); font-size: 9px; color: var(--ink-4);
+}
+.ov-card .ovc-act {
+  position: absolute; top: 7px; left: 9px;
+  font-family: var(--mono); font-size: 9px; color: var(--accent);
+}
+.ov-card .ovc-text {
+  font-size: 12px; line-height: 1.35; color: var(--ink-2);
+  display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;
+  overflow: hidden; margin-top: 8px;
+}
+.ov-card .ovc-type {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-4); margin-top: auto; padding-top: 8px;
+}
+
+/* --- Speaker notes strip ------------------------------------------------ */
+.notes-strip {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  background: rgba(12, 11, 10, 0.97);
+  border-top: 2px solid var(--accent);
+  padding: 18px 26px 22px;
+  max-height: 38vh; overflow-y: auto;
+  display: none;
+  backdrop-filter: blur(10px);
+}
+.notes-strip.is-open { display: block; }
+.notes-strip .ns-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 9px;
+}
+.notes-strip .ns-body { font-size: 16px; line-height: 1.6; color: var(--ink-2); max-width: 130ch; }
+.notes-strip .ns-meme {
+  margin-top: 12px; font-size: 13px; color: var(--gold);
+  font-family: var(--mono); letter-spacing: 0.03em;
+}
+
+/* --- Full-screen QR board ----------------------------------------------- */
+.qr-overlay { display: none; }
+.qr-overlay.is-open { display: grid; place-items: center; }
+.qr-overlay .qr-huge { text-align: center; }
+.qr-overlay .qr-huge h2 { font-size: 52px; margin-bottom: 14px; letter-spacing: -0.03em; }
+.qr-overlay .qr-huge p { color: var(--ink-3); font-size: 19px; margin: 0 0 38px; }
+.qr-overlay .qr-huge .qr-box { display: inline-block; background: #fff; padding: 20px; border-radius: 18px; }
+.qr-overlay .qr-url {
+  font-family: var(--mono); font-size: 15px; color: var(--accent);
+  margin-top: 26px; word-break: break-all;
+}
+
+/* --- Buzzword bingo ------------------------------------------------------ */
+.bingo-card { max-width: 620px; margin: 0 auto; }
+.bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.bingo-cell {
+  aspect-ratio: 1; border-radius: 12px; cursor: pointer;
+  background: var(--bg-2); border: 1px solid var(--rule);
+  display: grid; place-items: center; text-align: center;
+  padding: 12px; font-size: 15px; font-weight: 600; color: var(--ink-2);
+  transition: all 200ms var(--ease);
+}
+.bingo-cell:hover { border-color: var(--ink-4); }
+.bingo-cell.is-hit {
+  background: var(--accent); color: var(--accent-in); border-color: var(--accent);
+  transform: scale(0.96);
+}
+.bingo-cell.is-hit::after { content: ' ✓'; }
+.bingo-reset {
+  margin-top: 20px; font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.12em; background: none; border: 1px solid var(--rule);
+  color: var(--ink-3); padding: 9px 16px; border-radius: 8px; cursor: pointer;
+}
+
+/* ===========================================================================
+   PRESENTER WINDOW (presenter.html)
+   =========================================================================== */
+
+body.presenter { overflow: auto; background: #0C0B0A; }
+.pv {
+  display: grid; grid-template-columns: 1.15fr 1fr;
+  grid-template-rows: auto 1fr; gap: 20px;
+  height: 100vh; padding: 20px;
+}
+.pv-bar {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 24px;
+  padding: 14px 20px; border-radius: 12px; background: var(--bg-2);
+}
+.pv-clock { font-family: var(--mono); font-size: 34px; font-variant-numeric: tabular-nums; }
+.pv-clock.warn { color: var(--gold); } .pv-clock.over { color: var(--bad); }
+.pv-meta { font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.1em; }
+.pv-meta b { color: var(--accent); }
+.pv-btn {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  background: var(--bg-3); border: 1px solid var(--rule); color: var(--ink-2);
+  padding: 8px 14px; border-radius: 8px; cursor: pointer;
+}
+.pv-btn:hover { border-color: var(--accent); color: var(--ink); }
+.pv-left, .pv-right { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.pv-panel {
+  background: var(--bg-2); border-radius: 12px; padding: 18px 20px;
+  border: 1px solid var(--rule); min-height: 0;
+}
+.pv-panel h3 {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 12px; font-weight: 500;
+}
+.pv-notes { flex: 1; overflow-y: auto; }
+.pv-notes .pv-notes-body { font-size: 17px; line-height: 1.65; color: var(--ink); }
+.pv-current { font-size: 22px; line-height: 1.35; color: var(--ink); font-weight: 600; }
+.pv-current .pv-kicker { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: 400; }
+.pv-next { font-size: 16px; line-height: 1.4; color: var(--ink-3); }
+.pv-meme { font-family: var(--mono); font-size: 12px; color: var(--gold); margin-top: 12px; line-height: 1.5; }
+.pv-disconnected { color: var(--bad); }
+
+/* ===========================================================================
+   PRINT — a paper run-sheet with notes (Cmd+P)
+   =========================================================================== */
+
+@media print {
+  body { overflow: visible; background: #fff; color: #000; }
+  .deck, .chrome, .overlay, .notes-strip { display: none !important; }
+  .print-sheet { display: block !important; }
+}
+.print-sheet { display: none; }

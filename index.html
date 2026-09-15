@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Last Generation to Copy-Paste Code — HackGrid'26</title>
+<meta name="description" content="Madhav Bahl · HackGrid'26 · The Last Generation to Copy-Paste Code, and what it means for you.">
+<link rel="stylesheet" href="css/fonts.css?v=1789401896">
+<link rel="stylesheet" href="css/deck.css?v=1789401896">
+</head>
+<body>
+
+<div class="deck">
+  <div class="stage" id="stage"><!-- slides injected here -->
+    <button id="btn-skip-tier" class="skip-tier" type="button" hidden>
+      <span class="st-label">Skip ahead</span>
+      <span class="st-target"></span>
+    </button>
+  </div>
+</div>
+
+<div class="chrome">
+  <div class="act-rail"></div>
+  <div class="hud">
+    <span id="hud-act" class="hud-act"></span>
+    <span id="hud-timer" class="hud-timer">—:—</span>
+    <span id="hud-counter"></span>
+    <span>? help</span>
+    <button id="btn-fullscreen" class="hud-btn" type="button"
+            title="Fullscreen (F)" aria-label="Enter fullscreen">
+      <svg class="ic-enter" viewBox="0 0 24 24" width="14" height="14" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+      <svg class="ic-exit" viewBox="0 0 24 24" width="14" height="14" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8h3a2 2 0 0 0 2-2V3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M21 16h-3a2 2 0 0 0-2 2v3"/>
+      </svg>
+    </button>
+  </div>
+  <div class="progress"><i></i></div>
+</div>
+
+<!-- Speaker notes strip (S) -->
+<div class="notes-strip" id="notes-strip">
+  <div class="ns-label">Speaker notes</div>
+  <div class="ns-body"></div>
+  <div class="ns-meme"></div>
+</div>
+
+<!-- Overview (O) -->
+<div class="overlay" id="ov-overview">
+  <button class="ov-close">esc</button>
+  <div class="overlay-inner">
+    <h2>All slides</h2>
+    <p class="ov-sub">Click any slide to jump to it. Dashed cards are the ones trim mode (X) drops.</p>
+    <div class="ov-grid" id="ov-grid"></div>
+  </div>
+</div>
+
+<!-- Question board QR (Q) -->
+<div class="overlay qr-overlay" id="ov-qr">
+  <button class="ov-close">esc</button>
+  <div class="qr-huge">
+    <h2>Ask me anything</h2>
+    <p>Drop your question any time during the talk.</p>
+    <img class="qr-box" id="qr-big" src="assets/img/qr-questions.png" alt="Question board QR code" width="320" height="320">
+    <div class="qr-url" id="qr-url"></div>
+  </div>
+</div>
+
+<!-- Buzzword bingo (B) -->
+<div class="overlay" id="ov-bingo">
+  <button class="ov-close">esc</button>
+  <div class="overlay-inner">
+    <h2>AI Buzzword Bingo</h2>
+    <p class="ov-sub">The running gag. Tap a square when the word comes up — the room will start shouting them at you.</p>
+    <div class="bingo-card">
+      <div class="bingo-grid" id="bingo-grid"></div>
+      <button class="bingo-reset" id="bingo-reset">reset card</button>
+    </div>
+  </div>
+</div>
+
+<!-- Help (?) -->
+<div class="overlay" id="ov-help">
+  <button class="ov-close">esc</button>
+  <div class="overlay-inner">
+    <h2>Keyboard</h2>
+    <p class="ov-sub">Everything you need to drive the talk without touching the mouse.</p>
+    <div class="help-grid">
+      <div class="help-group">
+        <h3>Move</h3>
+        <div class="help-row"><kbd>→</kbd><kbd>space</kbd><span>Next beat / next slide</span></div>
+        <div class="help-row"><kbd>←</kbd><span>Back</span></div>
+        <div class="help-row"><kbd>0</kbd>–<kbd>7</kbd><span>Jump to act</span></div>
+        <div class="help-row"><kbd>home</kbd><kbd>end</kbd><span>First / last slide</span></div>
+        <div class="help-row"><kbd>O</kbd><span>Overview — click to jump</span></div>
+        <div class="help-row"><kbd>N</kbd><span>Skip to the next tier (Act 2)</span></div>
+      </div>
+      <div class="help-group">
+        <h3>Present</h3>
+        <div class="help-row"><kbd>P</kbd><span>Open presenter window (second screen)</span></div>
+        <div class="help-row"><kbd>S</kbd><span>Speaker notes strip</span></div>
+        <div class="help-row"><kbd>F</kbd><span>Fullscreen</span></div>
+        <div class="help-row"><kbd>.</kbd><span>Blackout — kills the screen mid-answer</span></div>
+        <div class="help-row"><kbd>C</kbd><span>Clean mode — hides all chrome</span></div>
+      </div>
+      <div class="help-group">
+        <h3>Time</h3>
+        <div class="help-row"><kbd>T</kbd><span>Start / stop the talk timer</span></div>
+        <div class="help-row"><kbd>R</kbd><span>Reset the timer</span></div>
+        <div class="help-row"><kbd>[</kbd><kbd>]</kbd><span>Target length −/+ 5 min</span></div>
+        <div class="help-row"><kbd>X</kbd><span>Trim mode — drops the optional slides</span></div>
+      </div>
+      <div class="help-group">
+        <h3>Audience</h3>
+        <div class="help-row"><kbd>Q</kbd><span>Full-screen question board QR</span></div>
+        <div class="help-row"><kbd>B</kbd><span>AI Buzzword Bingo card</span></div>
+        <div class="help-row"><kbd>esc</kbd><span>Close anything</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/slides.js?v=1789401896"></script>
+<script src="js/render.js?v=1789401896"></script>
+<script src="js/deck.js?v=1789401896"></script>
+<script src="js/livereload.js?v=1789401896"></script>
+<script>
+  var M = window.DECK.meta;
+  document.getElementById('qr-url').textContent = M.questionBoardUrl;
+  if (M.questionBoardImage) document.getElementById('qr-big').src = M.questionBoardImage;
+</script>
+</body>
+</html>
