@@ -48,11 +48,11 @@
       qrBlock(M.questionBoardUrl, 'Ask anything, anytime', boardImg()) + '</div>' : '';
   }
 
-  function boardImg() { return M.questionBoardImage || 'assets/img/qr-questions.png'; }
+  function boardImg() { return M.questionBoardImage || 'assets/img/qr-menti.png'; }
 
   function qrBlock(url, caption, file) {
     return '<div class="qr-block">' +
-      '<img class="qr-box" src="' + (file || 'assets/img/qr-questions.png') + '" alt="QR code for ' + url + '" width="150" height="150" ' +
+      '<img class="qr-box" src="' + (file || boardImg()) + '" alt="QR code for ' + url + '" width="150" height="150" ' +
       'onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'qr-box\',style:\'width:150px;height:150px\'}))">' +
       '<div class="qr-cap">' + caption + '</div></div>';
   }

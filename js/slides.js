@@ -22,7 +22,7 @@ window.DECK = {
     // Where homework.html is published. Shown on the Tier 5 hand-off slide —
     // set this to the real URL before the talk, the local path won't work for
     // anyone in the audience.
-    homeworkUrl: 'theleanprogrammer.com/hackgrid26/homework',
+    homeworkUrl: 'madhavbahl.github.io/vit-hackgrid26/homework.html',
     linksUrl: 'https://linktr.ee/theleanprogrammer'
   },
 
